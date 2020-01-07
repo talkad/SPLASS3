@@ -18,7 +18,7 @@ int main (int argc, char *argv[]) {
         return 1;
     }
 	
-	//From here we will see the rest of the ehco client implementation:
+
     while (1) {
         const short bufsize = 1024;
         char buf[bufsize];

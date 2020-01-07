@@ -30,7 +30,7 @@ bool ConnectionHandler::connect() {
     }
     return true;
 }
- 
+
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
     size_t tmp = 0;
 	boost::system::error_code error;
@@ -68,7 +68,7 @@ bool ConnectionHandler::getLine(std::string& line) {
 }
 
 bool ConnectionHandler::sendLine(std::string& line) {
-    return sendFrameAscii(line, '\n');
+    return sendFrameAscii(encdec.encodeMessage(line), '^@');
 }
  
 
@@ -98,7 +98,7 @@ bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter)
 	if(!result) return false;
 	return sendBytes(&delimiter,1);
 }
- 
+
 // Close down the connection properly.
 void ConnectionHandler::close() {
     try{
