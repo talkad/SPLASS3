@@ -1,7 +1,5 @@
-Boost_Echo_Client/.idea/Boost_Echo_Client.iml
-Boost_Echo_Client/.idea/misc.xml
-Boost_Echo_Client/.idea/workspace.xml
+Boost_Echo_Client/.idea/
 Boost_Echo_Client/CMakeLists.txt
 Boost_Echo_Client/cmake-build-debug/
-Boost_Echo_Client/.idea/vcs.xml
+
 
