@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b856700f-f118-4704-a1ed-109fe17f1392" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/spl-net.iml" beforeDir="false" afterPath="$PROJECT_DIR$/spl-net.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bgu/spl/net/srv/StompMessageIncoderDecoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bgu/spl/net/srv/StompIncoderDecoder.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +31,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="project.structure.last.edited" value="Project" />
@@ -58,7 +61,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578489095364</updated>
-      <workItem from="1578489124530" duration="5482000" />
+      <workItem from="1578489124530" duration="10400000" />
     </task>
     <servers />
   </component>
@@ -66,10 +69,10 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="521" y="109" width="374" height="575" key="#com.intellij.ide.util.MemberChooser" timestamp="1578492245633">
+    <state x="521" y="109" width="374" height="575" key="#com.intellij.ide.util.MemberChooser" timestamp="1578504407565">
       <screen x="67" y="27" width="1293" height="741" />
     </state>
-    <state x="521" y="109" width="374" height="575" key="#com.intellij.ide.util.MemberChooser/67.27.1293.741@67.27.1293.741" timestamp="1578492245633" />
+    <state x="521" y="109" width="374" height="575" key="#com.intellij.ide.util.MemberChooser/67.27.1293.741@67.27.1293.741" timestamp="1578504407565" />
     <state x="446" y="145" width="524" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog" timestamp="1578493159601">
       <screen x="67" y="27" width="1293" height="741" />
     </state>
