@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b856700f-f118-4704-a1ed-109fe17f1392" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/spl-net.iml" beforeDir="false" afterPath="$PROJECT_DIR$/spl-net.iml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1W785LY1klI7LSvLF7oCjIdLyAF" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b856700f-f118-4704-a1ed-109fe17f1392" name="Default Changelist" comment="" />
+      <created>1578489095364</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1578489095364</updated>
+      <workItem from="1578489124530" duration="5482000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="521" y="109" width="374" height="575" key="#com.intellij.ide.util.MemberChooser" timestamp="1578492245633">
+      <screen x="67" y="27" width="1293" height="741" />
+    </state>
+    <state x="521" y="109" width="374" height="575" key="#com.intellij.ide.util.MemberChooser/67.27.1293.741@67.27.1293.741" timestamp="1578492245633" />
+    <state x="446" y="145" width="524" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog" timestamp="1578493159601">
+      <screen x="67" y="27" width="1293" height="741" />
+    </state>
+    <state x="446" y="145" width="524" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/67.27.1293.741@67.27.1293.741" timestamp="1578493159601" />
+    <state x="246" y="54" width="924" height="684" key="Maven.ArtifactSearchDialog" timestamp="1578492943484">
+      <screen x="67" y="27" width="1293" height="741" />
+    </state>
+    <state x="246" y="54" width="924" height="684" key="Maven.ArtifactSearchDialog/67.27.1293.741@67.27.1293.741" timestamp="1578492943484" />
+    <state x="376" y="89" width="672" height="678" key="search.everywhere.popup" timestamp="1578494223932">
+      <screen x="67" y="27" width="1293" height="741" />
+    </state>
+    <state x="376" y="89" width="672" height="678" key="search.everywhere.popup/67.27.1293.741@67.27.1293.741" timestamp="1578494223932" />
+  </component>
+</project>
