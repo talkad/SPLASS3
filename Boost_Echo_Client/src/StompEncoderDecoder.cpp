@@ -3,7 +3,7 @@
 //
 
 #include "StompEncoderDecoder.h"
-#include <bits/unordered_map.h>
+#include <unordered_map>
 
 
 string StompEncoderDecoder::decodeMessage(string msg) {
@@ -11,8 +11,7 @@ string StompEncoderDecoder::decodeMessage(string msg) {
 }
 
 
-string StompEncoderDecoder::encodeMessage(string msg) {
-
+string StompEncoderDecoder::toStompFrame(string msg) {
     string frame="";
     std::vector<string> wordsVector;
     splitSentence(msg, wordsVector);
@@ -74,6 +73,9 @@ string StompEncoderDecoder::encodeMessage(string msg) {
         frame+="\n";
         frame+="^@";
     }
+
+
+
 }
 
 void StompEncoderDecoder::splitSentence(string msg, std::vector<string> &out) {

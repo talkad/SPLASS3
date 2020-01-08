@@ -11,15 +11,13 @@
 using std::string;
 class StompEncoderDecoder {
 public :
-    string encodeMessage(string msg);
+    string encodeFrame(string frame);
+    string toStompFrame(string msg);
     string decodeMessage(string msg);
     void splitSentence(string msg, std::vector<string>& out);
 
 private:
-    int subscription_id_counter=0;
-    int receipt_id_counter=0;
-    string my_name;
-    std:: unordered_map<string,string> borrow_map;
+
 
 };
 

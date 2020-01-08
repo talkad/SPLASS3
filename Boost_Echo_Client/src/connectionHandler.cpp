@@ -63,12 +63,12 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
     return true;
 }
  
-bool ConnectionHandler::getLine(std::string& line) {
-    return getFrameAscii(line, '\n');
+bool ConnectionHandler::getFrame(std::string &frame) {
+    return getFrameAscii(frame, '\n');
 }
 
-bool ConnectionHandler::sendLine(std::string& line) {
-    return sendFrameAscii(encdec.encodeMessage(line), '^@');
+bool ConnectionHandler::sendFrame(std::string &frame) {
+    return sendFrameAscii(encdec.encodeFrame(frame), '^@');
 }
  
 
@@ -97,6 +97,10 @@ bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter)
 	bool result=sendBytes(frame.c_str(),frame.length());
 	if(!result) return false;
 	return sendBytes(&delimiter,1);
+}
+
+string ConnectionHandler::process(Frame frame) {
+    return process(frame);
 }
 
 // Close down the connection properly.
