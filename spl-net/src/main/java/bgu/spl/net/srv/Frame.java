@@ -45,4 +45,15 @@ public class Frame {
         return result;
     }
 
+    public String getCommand() {
+        return command;
+    }
+
+    public Hashtable<String, String> getHeaders() {
+        return headers;
+    }
+
+    public String getBody() {
+        return body;
+    }
 }
