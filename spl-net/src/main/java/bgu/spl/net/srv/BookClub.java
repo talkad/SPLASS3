@@ -42,6 +42,18 @@ public class BookClub {
         users.putIfAbsent(name,new User(name,pwd));
     }
 
+    public User getUserByName(String name){
+        return users.get(name);
+    }
+
+    public User getUserByID(int id){
+        for(String name:users.keySet()){
+            if(users.get(name).getId()==id)
+                return users.get(name);
+        }
+        return null;
+    }
+
 
 
     //irrelevant at this point...
