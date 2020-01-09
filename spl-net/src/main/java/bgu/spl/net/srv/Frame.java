@@ -14,6 +14,12 @@ public class Frame {
         init(frame);
     }
 
+    public Frame(String command,String body){
+        this.command=command;
+        this.body=body;
+        headers=new Hashtable<>();
+    }
+
     private void init(String frame) {
         String[] lines=frame.split("\n");
         if(frame.length()>0)
@@ -35,6 +41,10 @@ public class Frame {
         body+="^@";
     }
 
+    public void addHeader(String key,String value){
+        headers.put(key,value);
+    }
+
     public String toString(){
         String result=command+"\n";
         for (String key:headers.keySet()) {
@@ -45,4 +55,15 @@ public class Frame {
         return result;
     }
 
+    public String getCommand() {
+        return command;
+    }
+
+    public Hashtable<String, String> getHeaders() {
+        return headers;
+    }
+
+    public String getBody() {
+        return body;
+    }
 }
