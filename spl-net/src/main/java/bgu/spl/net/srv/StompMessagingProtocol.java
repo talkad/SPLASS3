@@ -38,21 +38,54 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
         return shouldTerminate;
     }
 
+    //this function handles all possible scenarios of SEND frame
+    private void sendFrameResponse(Frame frame) {
+        String body=frame.getBody();
+        Hashtable<String,String> headers=frame.getHeaders();
+        String genre= headers.get("destination");
+        if(body.contains("has added the book")){ //add command
+            addBook(genre,frame.getBody());
+        }
+        if(body.contains("wish to borrow")){ //borrow command
+
+        }
+        if(body.contains("Returning")){ //return command
+
+        }
+        if(body.contains("book status")){ //status command
+
+        }
+    }
+
+    private void addBook(String genre, String body) {
+        String bookName = body.substring(body.lastIndexOf(' ') + 1);
+        String clientName = body.substring(0,body.indexOf(' '));
+        BookClub.getInstance().getUserByName(clientName).addBook(genre,bookName);
+    }
+
     //this function handles join genre- SUBSCRIBE frame
     private void subscribeFrameResponse(Frame frame) {
-        
+        Hashtable<String,String> headers=frame.getHeaders();
+        String receiptID=headers.get("receipt");
+        String genreID=headers.get("id");
+        String genre=headers.get("destination");
+        //add the client to a reading club
+        BookClub.getInstance().addGenreToUser(connectionId,genre,genreID);
+        BookClub.getInstance().subscribeGenre(genre,connectionId);
+        Frame receipt=new Frame("RECEIPT","Joined club "+genre);
+        receipt.addHeader("receipt",receiptID);
+        connection.send(connectionId,receipt.toString());
     }
 
     //this function handles logout- DISCONNECT frame
     private void disconnectFrameResponse(Frame frame) {
         Hashtable<String,String> headers=frame.getHeaders();
-        String receiptID=headers.get("receipt"); //the receipt is the user id- which is unique
+        String receiptID=headers.get("receipt");
         Frame receipt=new Frame("RECEIPT","");
         receipt.addHeader("receipt-id",receiptID);
         connection.send(connectionId,receipt);
-        //
         //remove the client from all the topics
-        //
+        BookClub.getInstance().removeClient(connectionId);
         BookClub.getInstance().getUserByID(connectionId).logout();
         connection.disconnect(connectionId);
     }
@@ -73,12 +106,14 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
                 }
                 else{ //this client was connected already
                     Frame error=new Frame("ERROR","User already logged in");
+                    System.out.println("User already logged in");
                     error.addHeader("message","User already logged in");
                     connection.send(connectionId,error.toString());
                 }
             }
             else{ //user exists but wrong pwd
                 Frame error=new Frame("ERROR","Wrong password");
+                System.out.println("Wrong password");
                 error.addHeader("message","Wrong password");
                 connection.send(connectionId,error.toString());
             }

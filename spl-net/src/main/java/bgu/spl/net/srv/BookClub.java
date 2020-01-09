@@ -6,10 +6,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BookClub {
 
-    //doubt if we need to use the implementation of the newsfeed
-    private ConcurrentHashMap<String, ConcurrentLinkedQueue<String>> channels = new ConcurrentHashMap<>();
+    //the key will be the genre
+    //each genre preserve the id of the clients who related to it
+    private ConcurrentHashMap<String, ConcurrentLinkedQueue<Integer>> genre_map = new ConcurrentHashMap<>();
     //all users
-    private ConcurrentHashMap<String,User> users; //the key will be the name of the client
+    private ConcurrentHashMap<String,User> users= new ConcurrentHashMap<>(); //the key will be the name of the client
+
 
     private static class SingletonHolder {
         private static BookClub instance=new BookClub();
@@ -54,24 +56,37 @@ public class BookClub {
         return null;
     }
 
-
-
-    //irrelevant at this point...
-    public ArrayList<String> fetch(String channel) {
-        ConcurrentLinkedQueue<String> queue = channels.get(channel);
-        if (queue == null) {
-            return new ArrayList<>(0); //empty
-        } else {
-            return new ArrayList<>(queue); //copy of the queue, arraylist is serializable
+    public void removeClient(int id){
+        for(String genre:genre_map.keySet()){
+            genre_map.get(genre).remove(id);
         }
     }
 
-    public void publish(String channel, String news) {
-        ConcurrentLinkedQueue<String> queue = channels.computeIfAbsent(channel, k -> new ConcurrentLinkedQueue<>());
-        queue.add(news);
+    public void subscribeGenre(String genre,int id){
+        ConcurrentLinkedQueue<Integer> usersID = genre_map.computeIfAbsent(genre, k -> new ConcurrentLinkedQueue<>());
+        usersID.add(id);
     }
 
-    public void clear() {
-        channels.clear();
+    public void addGenreToUser(int userID, String genre, String genreID) {
+        getUserByID(userID).addGenre(Integer.parseInt(genreID),genre);
     }
+
+//    //irrelevant at this point...
+//    public ArrayList<String> fetch(String channel) {
+//        ConcurrentLinkedQueue<String> queue = channels.get(channel);
+//        if (queue == null) {
+//            return new ArrayList<>(0); //empty
+//        } else {
+//            return new ArrayList<>(queue); //copy of the queue, arraylist is serializable
+//        }
+//    }
+//
+//    public void publish(String channel, String news) {
+//        ConcurrentLinkedQueue<String> queue = channels.computeIfAbsent(channel, k -> new ConcurrentLinkedQueue<>());
+//        queue.add(news);
+//    }
+//
+//    public void clear() {
+//        channels.clear();
+//    }
 }
