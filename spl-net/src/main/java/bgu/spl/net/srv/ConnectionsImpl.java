@@ -1,6 +1,7 @@
 package bgu.spl.net.srv;
 
 
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -22,7 +23,6 @@ public class ConnectionsImpl implements Connections<String> {
         ConcurrentSkipListSet<Integer> idSet=subscribersMap.get(channel);
         for(Integer id: idSet)
             send(id,msg);
-
     }
 
     @Override
@@ -31,5 +31,7 @@ public class ConnectionsImpl implements Connections<String> {
             handlersMap.get(connectionId).close();
         }
         catch (IOException ignored){}
+        handlersMap.remove(connectionId);
+
     }
 }

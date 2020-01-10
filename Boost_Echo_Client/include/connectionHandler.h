@@ -4,6 +4,9 @@
 #include <string>
 #include <iostream>
 #include <boost/asio.hpp>
+#include "StompEncoderDecoder.h"
+#include "StompMessagingProtocol.h"
+#include "Frame.h"
 
 using boost::asio::ip::tcp;
 
@@ -12,9 +15,12 @@ private:
 	const std::string host_;
 	const short port_;
 	boost::asio::io_service io_service_;   // Provides core I/O functionality
-	tcp::socket socket_; 
+	tcp::socket socket_;
+	StompEncoderDecoder encdec;
+	StompMessagingProtocol protocol;
  
 public:
+    string process(Frame frame);
     ConnectionHandler(std::string host, short port);
     virtual ~ConnectionHandler();
  
@@ -31,11 +37,11 @@ public:
 	
     // Read an ascii line from the server
     // Returns false in case connection closed before a newline can be read.
-    bool getLine(std::string& line);
+    bool getFrame(std::string& frame);
 	
 	// Send an ascii line from the server
     // Returns false in case connection closed before all the data is sent.
-    bool sendLine(std::string& line);
+    bool sendFrame(std::string& frame);
  
     // Get Ascii data from the server until the delimiter character
     // Returns false in case connection closed before null can be read.
