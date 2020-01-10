@@ -11,6 +11,7 @@ public class BookClub {
     private ConcurrentHashMap<String, ConcurrentLinkedQueue<Integer>> genre_map = new ConcurrentHashMap<>();
     //all users
     private ConcurrentHashMap<String,User> users= new ConcurrentHashMap<>(); //the key will be the name of the client
+    private static int messageID=0;
 
 
     private static class SingletonHolder {
@@ -20,6 +21,19 @@ public class BookClub {
      // Retrieves the single instance of this class.
     public static BookClub getInstance() {
         return SingletonHolder.instance;
+    }
+
+    public String generateMsgID(){
+        String id=messageID+"";
+        while(id.length()<5){
+            id="0"+id;
+        }
+        messageID++;
+        return id;
+    }
+
+    public ConcurrentLinkedQueue<Integer> getSubsByGenre(String genre){
+        return genre_map.get(genre);
     }
 
     public boolean isUsernameExists(String name){
@@ -65,6 +79,10 @@ public class BookClub {
     public void subscribeGenre(String genre,int id){
         ConcurrentLinkedQueue<Integer> usersID = genre_map.computeIfAbsent(genre, k -> new ConcurrentLinkedQueue<>());
         usersID.add(id);
+    }
+
+    public void unsubscribeGenre(String genre, int connectionId) {
+        genre_map.get(genre).remove(connectionId);
     }
 
     public void addGenreToUser(int userID, String genre, String genreID) {

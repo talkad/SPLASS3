@@ -1,6 +1,7 @@
 package bgu.spl.net.api;
 
 import bgu.spl.net.srv.Connections;
+import bgu.spl.net.srv.Frame;
 
 public interface StompMessagingProtocol  {
 	/**
@@ -8,7 +9,7 @@ public interface StompMessagingProtocol  {
 	**/
     void start(int connectionId, Connections<String> connections);
     
-    void process(String message);
+    void process(Frame frame);
 	
 	/**
      * @return true if the connection should be terminated

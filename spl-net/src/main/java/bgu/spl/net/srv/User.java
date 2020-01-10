@@ -9,8 +9,7 @@ public class User {
     private String pwd;
     private boolean logged_in;
     private int id;
-    private ConcurrentHashMap<Integer,String> genre_map;//map for every id its genre name
-    private ConcurrentHashMap<String, ConcurrentLinkedQueue<String>> inventory;
+    private ConcurrentHashMap<String,Integer> genre_map;//map for every id its genre name
 
     public User(String name, String pwd) {
         this.name = name;
@@ -19,20 +18,14 @@ public class User {
         id_counter++;
         this.logged_in = false;
         genre_map=new ConcurrentHashMap<>();
-        inventory=new ConcurrentHashMap<>();
     }
 
-    public void addBook(String genre,String bookName){
-        ConcurrentLinkedQueue<String> usersID = inventory.computeIfAbsent(genre, k -> new ConcurrentLinkedQueue<>());
-        usersID.add(bookName);
+    public int getGenreID(String genre){
+        return genre_map.get(genre);
     }
 
     public void addGenre(int id,String genre){
-        genre_map.put(id,genre);
-    }
-
-    public String getName() {
-        return name;
+        genre_map.put(genre,id);
     }
 
     public String getPwd() {
