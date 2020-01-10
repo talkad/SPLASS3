@@ -15,8 +15,8 @@ import java.util.function.Supplier;
 public class Reactor<T> implements Server<T> {
 
     private final int port;
-    private final Supplier<MessagingProtocol<T>> protocolFactory;
-    private final Supplier<MessageEncoderDecoder<T>> readerFactory;
+    private final Supplier<StompMessagingProtocol> protocolFactory;
+    private final Supplier<MessageEncoderDecoder<Frame>> readerFactory;
     private final ActorThreadPool pool;
     private Selector selector;
 
@@ -26,8 +26,8 @@ public class Reactor<T> implements Server<T> {
     public Reactor(
             int numThreads,
             int port,
-            Supplier<MessagingProtocol<T>> protocolFactory,
-            Supplier<MessageEncoderDecoder<T>> readerFactory) {
+            Supplier<StompMessagingProtocol> protocolFactory,
+            Supplier<MessageEncoderDecoder<Frame>> readerFactory) {
 
         this.pool = new ActorThreadPool(numThreads);
         this.port = port;
@@ -95,7 +95,7 @@ public class Reactor<T> implements Server<T> {
     private void handleAccept(ServerSocketChannel serverChan, Selector selector) throws IOException {
         SocketChannel clientChan = serverChan.accept();
         clientChan.configureBlocking(false);
-        final NonBlockingConnectionHandler<T> handler = new NonBlockingConnectionHandler<>(
+        final NonBlockingConnectionHandler handler = new NonBlockingConnectionHandler(
                 readerFactory.get(),
                 protocolFactory.get(),
                 clientChan,
@@ -105,7 +105,7 @@ public class Reactor<T> implements Server<T> {
 
     private void handleReadWrite(SelectionKey key) {
         @SuppressWarnings("unchecked")
-        NonBlockingConnectionHandler<T> handler = (NonBlockingConnectionHandler<T>) key.attachment();
+        NonBlockingConnectionHandler handler = (NonBlockingConnectionHandler) key.attachment();
 
         if (key.isReadable()) {
             Runnable task = handler.continueRead();

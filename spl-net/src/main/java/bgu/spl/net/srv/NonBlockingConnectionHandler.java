@@ -10,20 +10,20 @@ import java.nio.channels.SocketChannel;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
+public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
 
     private static final int BUFFER_ALLOCATION_SIZE = 1 << 13; //8k
     private static final ConcurrentLinkedQueue<ByteBuffer> BUFFER_POOL = new ConcurrentLinkedQueue<>();
 
-    private final MessagingProtocol<T> protocol;
-    private final MessageEncoderDecoder<T> encdec;
+    private final StompMessagingProtocol protocol;
+    private final MessageEncoderDecoder<Frame> encdec;
     private final Queue<ByteBuffer> writeQueue = new ConcurrentLinkedQueue<>();
     private final SocketChannel chan;
     private final Reactor reactor;
 
     public NonBlockingConnectionHandler(
-            MessageEncoderDecoder<T> reader,
-            MessagingProtocol<T> protocol,
+            MessageEncoderDecoder<Frame> reader,
+            StompMessagingProtocol protocol,
             SocketChannel chan,
             Reactor reactor) {
         this.chan = chan;
@@ -47,13 +47,9 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
             return () -> {
                 try {
                     while (buf.hasRemaining()) {
-                        T nextMessage = encdec.decodeNextByte(buf.get());
+                        Frame nextMessage = encdec.decodeNextByte(buf.get());
                         if (nextMessage != null) {
-                            T response = protocol.process(nextMessage);
-                            if (response != null) {
-                                writeQueue.add(ByteBuffer.wrap(encdec.encode(response)));
-                                reactor.updateInterestedOps(chan, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-                            }
+                            protocol.process(nextMessage);
                         }
                     }
                 } finally {
@@ -117,7 +113,7 @@ public class NonBlockingConnectionHandler<T> implements ConnectionHandler<T> {
     }
 
     @Override
-    public void send(T msg) {
+    public void send(Frame msg) {
         //IMPLEMENT IF NEEDED
     }
 }
