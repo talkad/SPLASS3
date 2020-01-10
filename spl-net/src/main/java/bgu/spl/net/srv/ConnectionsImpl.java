@@ -8,6 +8,13 @@ import java.util.Hashtable;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ConnectionsImpl implements Connections<String> {
+
+    //look at BookClub (singleton)
+    //i defined these data structure there, you dont need to define them here
+    // i am not going to touch your code- do whatever seems right to you
+    // good luck mate!
+    // you probably wonder where my english from ?
+    //from the bathroom
     private Hashtable<Integer,ConnectionHandler> handlersMap;
     private Hashtable<String, ConcurrentSkipListSet<Integer>> subscribersMap;// key- genrename, element- set of subs ids
 
