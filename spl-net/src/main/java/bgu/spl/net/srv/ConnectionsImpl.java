@@ -9,9 +9,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ConnectionsImpl implements Connections<String> {
+
     private ConcurrentHashMap<Integer, ConnectionHandler> handlersMap;//connectionid to handler
     private ConcurrentHashMap<String, ConcurrentSkipListSet<Integer>> subscribersMap;// key- genrename, element- set of client!! ids
     private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> subIdClientId_genre;// key- clientid, map that: key-subscriptionid, element-genrename
+
+
+    //look at BookClub (singleton)
+    //i defined these data structure there, you dont need to define them here
+    // i am not going to touch your code- do whatever seems right to you
+    // good luck mate!
+    // you probably wonder where my english from ?
+    //from the bathroom
+    //private Hashtable<Integer,ConnectionHandler> handlersMap;
+    //private Hashtable<String, ConcurrentSkipListSet<Integer>> subscribersMap;// key- genrename, element- set of subs ids
+
 
     public ConnectionsImpl() {
         handlersMap = new ConcurrentHashMap<>();

@@ -1,6 +1,5 @@
 package bgu.spl.net.srv;
 
-import java.sql.Connection;
 import java.util.Hashtable;
 
 public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingProtocol {
@@ -18,17 +17,23 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
 
     @Override
     public void process(Frame frame) {
-        if(frame.getCommand().equals("CONNECT")){
-            connectFrameResponse(frame);
-        }
-        else if(frame.getCommand().equals("SUBSCRIBE")){
-            subscribeFrameResponse(frame);
-        }
-        else if(frame.getCommand().equals("SEND")){
-            sendFrameResponse(frame);
-        }
-        else if(frame.getCommand().equals("DISCONNECT")){
-            disconnectFrameResponse(frame);
+        switch (frame.getCommand()) {
+            case "CONNECT":
+                connectFrameResponse(frame);
+                break;
+            case "SUBSCRIBE":
+                subscribeFrameResponse(frame);
+                break;
+            case "UNSUBSCRIBE":
+                unsubscribeFrameResponse(frame);
+                break;
+            case "SEND":
+                sendFrameResponse(frame);
+                break;
+            case "DISCONNECT":
+                disconnectFrameResponse(frame);
+                break;
+
         }
     }
 
@@ -42,24 +47,34 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
         String body=frame.getBody();
         Hashtable<String,String> headers=frame.getHeaders();
         String genre= headers.get("destination");
-        if(body.contains("has added the book")){ //add command
-            addBook(genre,frame.getBody());
-        }
-        if(body.contains("wish to borrow")){ //borrow command
 
+        if(body.contains("taking ") && body.contains(" from ")){ //can take book from some other client- borrowing scenario
+            takeBook(body,genre);
         }
-        if(body.contains("Returning")){ //return command
-
-        }
-        if(body.contains("book status")){ //status command
-
+        else{
+            sendMessage(body,genre);
         }
     }
 
-    private void addBook(String genre, String body) {
-        String bookName = body.substring(body.lastIndexOf(' ') + 1);
-        String clientName = body.substring(0,body.indexOf(' '));
-        BookClub.getInstance().getUserByName(clientName).addBook(genre,bookName);
+    private void takeBook(String body, String genre) {
+        String[] msg=body.split(" ");
+        String bookName="";
+        for(int i=1;i<msg.length-2;i++)
+        {
+            bookName+=msg[i]+" ";
+        }
+        sendMessage(msg[msg.length-1]+" has "+bookName,genre);
+
+        sendMessage(body,genre);
+    }
+
+
+    private void sendMessage(String body, String genre) {
+        Frame frame=new Frame("MESSAGE",body);
+        frame.addHeader("subscription", BookClub.getInstance().getUserByID(connectionId).getGenreID(genre)+"");
+        frame.addHeader("Message-id",BookClub.getInstance().generateMsgID());
+        frame.addHeader("destination",genre);
+        connection.send(genre,frame.toString());
     }
 
     //this function handles join genre- SUBSCRIBE frame
@@ -72,6 +87,19 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
         BookClub.getInstance().addGenreToUser(connectionId,genre,genreID);
         BookClub.getInstance().subscribeGenre(genre,connectionId);
         Frame receipt=new Frame("RECEIPT","Joined club "+genre);
+        receipt.addHeader("receipt",receiptID);
+        connection.send(connectionId,receipt.toString());
+    }
+
+    //this function handles exit genre- UNSUBSCRIBE frame
+    private void unsubscribeFrameResponse(Frame frame) {
+        Hashtable<String,String> headers=frame.getHeaders();
+        String receiptID=headers.get("receipt");
+        String genreID=headers.get("id");
+        String genre=headers.get("destination");
+        //remove the client to a reading club
+        BookClub.getInstance().unsubscribeGenre(genre,connectionId);
+        Frame receipt=new Frame("RECEIPT","Exited club "+genre);
         receipt.addHeader("receipt",receiptID);
         connection.send(connectionId,receipt.toString());
     }
@@ -100,21 +128,22 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
                     BookClub.getInstance().getUserByName(name).login();
                     Frame connected=new Frame("CONNECTED","login successful");
                     connected.addHeader("version","1.2");
-                    connected.addHeader("receipt-id",BookClub.getInstance().getUserByName(name).getId()+"");
                     connection.send(connectionId,connected.toString());
                 }
                 else{ //this client was connected already
                     Frame error=new Frame("ERROR","User already logged in");
-                    System.out.println("User already logged in");
                     error.addHeader("message","User already logged in");
                     connection.send(connectionId,error.toString());
+                    shouldTerminate=true;
+                    connection.disconnect(connectionId);
                 }
             }
             else{ //user exists but wrong pwd
                 Frame error=new Frame("ERROR","Wrong password");
-                System.out.println("Wrong password");
                 error.addHeader("message","Wrong password");
                 connection.send(connectionId,error.toString());
+                shouldTerminate=true;
+                connection.disconnect(connectionId);
             }
         }
         else{//new user login
@@ -122,7 +151,6 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
             BookClub.getInstance().getUserByName(name).login();
             Frame connected=new Frame("CONNECTED","login successful");
             connected.addHeader("version","1.2");
-            connected.addHeader("receipt-id",BookClub.getInstance().getUserByName(name).getId()+"");
             connection.send(connectionId,connected.toString());
         }
     }
