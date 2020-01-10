@@ -10,19 +10,23 @@ import java.util.function.Supplier;
 public abstract class BaseServer<T> implements Server<T> {
 
     private final int port;
-    private final Supplier<MessagingProtocol<T>> protocolFactory;
-    private final Supplier<MessageEncoderDecoder<T>> encdecFactory;
+    private final Supplier<StompMessagingProtocol> protocolFactory;
+    private final Supplier<MessageEncoderDecoder<Frame>> encdecFactory;
     private ServerSocket sock;
+    private Connections connections;
+    private int connectionID;
 
     public BaseServer(
             int port,
-            Supplier<MessagingProtocol<T>> protocolFactory,
-            Supplier<MessageEncoderDecoder<T>> encdecFactory) {
+            Supplier<StompMessagingProtocol> protocolFactory,
+            Supplier<MessageEncoderDecoder<Frame>> encdecFactory) {
 
         this.port = port;
         this.protocolFactory = protocolFactory;
         this.encdecFactory = encdecFactory;
 		this.sock = null;
+        connectionID=0;
+        connections=new ConnectionsImpl();
     }
 
     @Override
@@ -37,11 +41,12 @@ public abstract class BaseServer<T> implements Server<T> {
 
                 Socket clientSock = serverSock.accept();
 
-                BlockingConnectionHandler<T> handler = new BlockingConnectionHandler<>(
+                BlockingConnectionHandler handler = new BlockingConnectionHandler(
                         clientSock,
                         encdecFactory.get(),
-                        protocolFactory.get());
-
+                        protocolFactory.get(),
+                        connectionID);
+                connections.addConnection(connectionID,handler);
                 execute(handler);
             }
         } catch (IOException ex) {
@@ -56,6 +61,6 @@ public abstract class BaseServer<T> implements Server<T> {
 			sock.close();
     }
 
-    protected abstract void execute(BlockingConnectionHandler<T>  handler);
+    protected abstract void execute(BlockingConnectionHandler  handler);
 
 }

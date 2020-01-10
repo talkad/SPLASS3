@@ -17,8 +17,7 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
     }
 
     @Override
-    public void process(String message) {
-        Frame frame=new Frame(message);
+    public void process(Frame frame) {
         if(frame.getCommand().equals("CONNECT")){
             connectFrameResponse(frame);
         }
