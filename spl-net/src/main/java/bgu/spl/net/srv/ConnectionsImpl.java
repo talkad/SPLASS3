@@ -1,27 +1,37 @@
 package bgu.spl.net.srv;
 
-import java.util.concurrent.ConcurrentMap;
 
-public class ConnectionsImpl<T> implements Connections {
-    //the key is the client id and the value is its proper connectionHandler
-    private ConcurrentMap<Integer,ConnectionHandler<T>> connections_map;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.Hashtable;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+public class ConnectionsImpl implements Connections<String> {
+    private Hashtable<Integer,ConnectionHandler> handlersMap;
+    private Hashtable<String, ConcurrentSkipListSet<Integer>> subscribersMap;// key- genrename, element- set of subs ids
+
 
     @Override
-    public boolean send(int connectionId, Object msg) {
-        return false;
+    public boolean send(int connectionId, String msg) {
+        handlersMap.get(connectionId).send(msg);
+        return true;// just for the hell of it
     }
 
     @Override
-    public void send(String channel, Object msg) {
-
+    public void send(String channel, String msg) {
+        ConcurrentSkipListSet<Integer> idSet=subscribersMap.get(channel);
+        for(Integer id: idSet)
+            send(id,msg);
     }
 
     @Override
     public void disconnect(int connectionId) {
-        ConnectionHandler connection=connections_map.get(connectionId);
         try {
-            connection.close();
-        }catch (Exception e){}
-        connections_map.remove(connectionId);
+            handlersMap.get(connectionId).close();
+        }
+        catch (IOException ignored){}
+        handlersMap.remove(connectionId);
+
     }
 }
