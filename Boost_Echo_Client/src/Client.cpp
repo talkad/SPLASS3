@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <connectionHandler.h>
 #include <Frame.h>
-#include "Client.h"
+#include <Client.h>
 
 /**
 * This code assumes that the server replies the exact text the client sent it (as opposed to the practical session example)
