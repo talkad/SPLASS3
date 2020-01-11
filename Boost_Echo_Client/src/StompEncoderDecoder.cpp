@@ -22,18 +22,24 @@ string StompEncoderDecoder::toStompFrame(string msg) {
         frame+="accept-version: 1.2\n";
         frame+="host:"+wordsVector.at(1)+"\n";
         frame+="login:"+wordsVector.at(2)+"\n";
+        UserData::initiate(wordsVector.at(2));
         frame+="passcode:"+wordsVector.at(3)+"\n";
         frame+="\n";
         frame+="^@";
-
     }
     if(command.compare("join")==0){
         frame+="SUBSCRIBE\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
-        frame+="id:"+ std::to_string(subscription_id_counter)+"\n";
-        subscription_id_counter++;//not thread safe
-        frame+="receipt:"+std::to_string(receipt_id_counter)+"\n";
-        receipt_id_counter++;//not thread safe;
+        frame+="id:"+ std::to_string(UserData::getInstance()->generateSubID())+"\n";
+        frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
+        frame+="\n";
+        frame+="^@";
+    }
+    if(command.compare("exit")==0){
+        frame+="UNSUBSCRIBE\n";
+        frame+="destination:"+wordsVector.at(1)+"\n";
+        frame+="id:"+ std::to_string(UserData::getInstance()->generateSubID())+"\n";
+        frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
         frame+="\n";
         frame+="^@";
     }
@@ -41,24 +47,33 @@ string StompEncoderDecoder::toStompFrame(string msg) {
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+= my_name +" has added the book "+ wordsVector.at(2)+"\n";
+        frame+= UserData::getInstance()->getName() +" has added the book "+ wordsVector.at(2)+"\n";
         frame+="^@";
     }
+
+
+
     if(command.compare("borrow")==0){//there is a pingpong with server and we send another message of "taking book"
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+= my_name +" wish to borrow "+wordsVector.at(2);
+        frame+= UserData::getInstance()->getName() +" wish to borrow "+wordsVector.at(2);
         frame+="\n";
         frame+="^@";
     }
+
+
+
     if(command.compare("return")==0){
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+="Returning "+ wordsVector.at(2) + " to " + borrow_map.at(wordsVector.at(2))+"\n";
+        frame+="Returning "+ wordsVector.at(2) + " to " + UserData::getInstance()->getLender(wordsVector.at(2))+"\n";
         frame+="^@";
     }
+
+
+
     if(command.compare("status")==0){ //there is a pingpong with server and we send another message of "taking book"
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
@@ -66,15 +81,14 @@ string StompEncoderDecoder::toStompFrame(string msg) {
         frame+= "book status\n";
         frame+="^@";
     }
+
+
     if(command.compare("logout")==0){
         frame+="DISCONNECT\n";
-        frame+="receipt:"+std::to_string(receipt_id_counter)+"\n";
-        receipt_id_counter++;//not thread safe;
+        frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
         frame+="\n";
         frame+="^@";
     }
-
-
 
 }
 
@@ -87,3 +101,6 @@ void StompEncoderDecoder::splitSentence(string msg, std::vector<string> &out) {
         out.push_back(msg.substr(start, end - start));
     }
 }
+
+
+

@@ -15,6 +15,7 @@ const string &Frame::getCommand() const {
 const string &Frame::getMessageBody() const {
     return message_body;
 }
+
 void Frame::splitSentence(string msg, std::vector<string> &out,char delimiter) {
     size_t start;
     size_t end = 0;
@@ -24,6 +25,7 @@ void Frame::splitSentence(string msg, std::vector<string> &out,char delimiter) {
         out.push_back(msg.substr(start, end - start));
     }
 }
+
 const string Frame::toString() {
     string result=command+"\n";
     for (auto x:header_map)
@@ -32,9 +34,12 @@ const string Frame::toString() {
     result+=message_body;//has null inside already
     return result;
 }
+
 Frame::Frame(string msg) {
     vector<string> lines;
     splitSentence(msg,lines,'\n');
+    command=lines.at(0);
+
     for(string s: lines){
         if(size_t k=s.find(':')!=std::string::npos) {
             string header = s.substr(0, k - 1);
@@ -42,9 +47,8 @@ Frame::Frame(string msg) {
             header_map.insert(header,value);
         }
     }
+
     size_t body_index=msg.find("\n\n");
     message_body=msg.substr(body_index+2);
-    size_t command_until=msg.find('\n');
-    command=msg.substr(0,command_until-1);
 }
 

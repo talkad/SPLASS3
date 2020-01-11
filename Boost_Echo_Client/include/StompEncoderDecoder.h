@@ -7,8 +7,11 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "UserData.h"
 
 using std::string;
+using std::unordered_map;
+
 class StompEncoderDecoder {
 public :
     string encodeFrame(string frame);
@@ -16,9 +19,8 @@ public :
     string decodeMessage(string msg);
     void splitSentence(string msg, std::vector<string>& out);
 
+
 private:
-
-
 };
 
 

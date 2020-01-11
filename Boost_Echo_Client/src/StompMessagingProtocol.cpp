@@ -1,7 +1,3 @@
-//
-// Created by amir on 08/01/2020.
-//
-
 #include <Frame.h>
 #include "StompMessagingProtocol.h"
 

@@ -8,14 +8,15 @@ include_directories(include)
 add_executable(Boost_Echo_Client
         include/connectionHandler.h
         src/connectionHandler.cpp
-        include/Client.h
-        src/Client.cpp
+        include/UserData.h
+        src/UserData.cpp
         include/Frame.h
         src/Frame.cpp
         include/StompMessagingProtocol.h
         src/StompMessagingProtocol.cpp
         include/StompEncoderDecoder.h
-        src/StompEncoderDecoder.cpp)
+        src/StompEncoderDecoder.cpp
+        src/Client.cpp)
 
 find_package(Boost 1.56 REQUIRED COMPONENTS date_time filesystem iostreams)
 
