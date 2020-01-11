@@ -16,7 +16,8 @@ add_executable(Boost_Echo_Client
         src/StompMessagingProtocol.cpp
         include/StompEncoderDecoder.h
         src/StompEncoderDecoder.cpp
-        src/Client.cpp)
+        src/Client.cpp
+        )
 
 find_package(Boost 1.56 REQUIRED COMPONENTS date_time filesystem iostreams)
 

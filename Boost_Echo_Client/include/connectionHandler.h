@@ -12,18 +12,20 @@ using boost::asio::ip::tcp;
 
 class ConnectionHandler{
 private:
-	const std::string host_;
+    const std::string host_;
 	const short port_;
 	boost::asio::io_service io_service_;   // Provides core I/O functionality
 	tcp::socket socket_;
 	StompEncoderDecoder encdec;
-	StompMessagingProtocol protocol;
+    StompMessagingProtocol protocol;
  
 public:
-    string process(Frame frame);
     ConnectionHandler(std::string host, short port);
+    ConnectionHandler(ConnectionHandler &handler);
     virtual ~ConnectionHandler();
- 
+    string process(Frame& frame);
+    string toStompFrame(string& msg);
+
     // Connect to the remote machine
     bool connect();
 
@@ -53,7 +55,8 @@ public:
 
     // Close down the connection properly.
     void close();
- 
+
+    ConnectionHandler(ConnectionHandler handler);
 }; //class ConnectionHandler
  
 #endif

@@ -40,13 +40,13 @@ Frame::Frame(string msg) {
     splitSentence(msg,lines,'\n');
     command=lines.at(0);
 
-    for(string s: lines){
-        if(size_t k=s.find(':')!=std::string::npos) {
-            string header = s.substr(0, k - 1);
-            string value = s.substr(k+1,s.length()-k);
-            header_map.insert(header,value);
-        }
-    }
+//    for(string s: lines){
+//        if(size_t k=s.find(':')!=std::string::npos) {
+//            string header = s.substr(0, k - 1);
+//            string value = s.substr(k+1,s.length()-k);
+//            header_map.insert(header,value);
+//        }
+//    }
 
     size_t body_index=msg.find("\n\n");
     message_body=msg.substr(body_index+2);

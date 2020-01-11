@@ -6,7 +6,7 @@
 
 
 //borrow- the book will be removed from this client if the book exists, but the borrower will not get the book
-string StompMessagingProtocol::process(Frame frame) {
+string StompMessagingProtocol::process(Frame& frame) {
     string message="";
     string command=frame.getCommand();
     string message_body=frame.getMessageBody();

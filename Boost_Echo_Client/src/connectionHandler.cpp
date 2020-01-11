@@ -68,7 +68,7 @@ bool ConnectionHandler::getFrame(std::string &frame) {
 }
 
 bool ConnectionHandler::sendFrame(std::string &frame) {
-    return sendFrameAscii(encdec.toStompFrame(frame), '^@');
+    return sendFrameAscii(frame, '\0');
 }
 
 bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
@@ -91,16 +91,13 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
     return true;
 }
 
-
 bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter) {
 	bool result=sendBytes(frame.c_str(),frame.length());
 	if(!result) return false;
 	return sendBytes(&delimiter,1);
 }
 
-string ConnectionHandler::process(Frame frame) {
-    return process(frame);
-}
+
 
 // Close down the connection properly.
 void ConnectionHandler::close() {
@@ -109,4 +106,18 @@ void ConnectionHandler::close() {
     } catch (...) {
         std::cout << "closing failed: connection already closed" << std::endl;
     }
+}
+
+string ConnectionHandler::process(Frame& frame) {
+    return protocol.process(frame);
+}
+
+string ConnectionHandler::toStompFrame(string& msg) {
+    return encdec.toStompFrame(msg);
+}
+
+ConnectionHandler::ConnectionHandler(ConnectionHandler &handler)
+        : host_(handler.host_), port_(handler.port_), encdec(handler.encdec), protocol(handler.protocol),
+          socket_(handler.socket_) {
+                      //  io_service_(handler.io_service_), socket_(handler.socket_), {
 }

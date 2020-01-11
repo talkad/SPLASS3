@@ -3,7 +3,7 @@
 
 
 string StompEncoderDecoder::toStompFrame(const string& msg) {
-    string frame;
+    string frame="";
     std::vector<string> wordsVector;
     splitSentence(msg, wordsVector);
     string command=wordsVector.at(0);
