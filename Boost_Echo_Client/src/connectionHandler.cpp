@@ -62,15 +62,14 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
     }
     return true;
 }
- 
+
 bool ConnectionHandler::getFrame(std::string &frame) {
     return getFrameAscii(frame, '\n');
 }
 
 bool ConnectionHandler::sendFrame(std::string &frame) {
-    return sendFrameAscii(encdec.encodeFrame(frame), '^@');
+    return sendFrameAscii(encdec.toStompFrame(frame), '^@');
 }
- 
 
 bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
     char ch;
@@ -82,7 +81,7 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
 		{
 			return false;
 		}
-		if(ch!='\0')  
+		if(ch!='\0')
 			frame.append(1, ch);
 	}while (delimiter != ch);
     } catch (std::exception& e) {
@@ -91,8 +90,8 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
     }
     return true;
 }
- 
- 
+
+
 bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter) {
 	bool result=sendBytes(frame.c_str(),frame.length());
 	if(!result) return false;

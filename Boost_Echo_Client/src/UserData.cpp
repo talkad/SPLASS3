@@ -45,5 +45,26 @@ void UserData::remove(string &genre, string &bookName) {
     if (itr != inventory[genre].cend()) {
         inventory[genre].erase(itr);
     }
+}
 
+bool UserData::isExists(string genre, string &bookName) {
+    vector<string>::iterator it;
+    it = std::find (inventory[genre].begin(), inventory[genre].end(), bookName);
+    if (it != inventory[genre].end())
+    {
+        return true;
+    }
+    return false;
+}
+
+string UserData::getBooks() {
+    string books="";
+    for(auto genre: inventory){
+        for(string book: genre.second){
+            books+=book+",";
+        }
+    }
+    if(books.length()>0)
+        books=books.substr(0,books.length()-1);
+    return books;
 }
