@@ -7,14 +7,14 @@
 
 #include <string>
 #include <vector>
-#include <Frame.h>
 
 using std::string;
 using std::vector;
 class StompMessagingProtocol {
 public:
-    string process(Frame& msg);
-    void splitSentence(const string &msg, vector<string> &out);
+    string process(string& msg);
+    static void splitSentence(const string& msg, std::vector<string> &out,char delimiter);
+    int indexOf(string& text, string& pattern);
 };
 
 

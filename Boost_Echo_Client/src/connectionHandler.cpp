@@ -108,7 +108,7 @@ void ConnectionHandler::close() {
     }
 }
 
-string ConnectionHandler::process(Frame& frame) {
+string ConnectionHandler::process(string& frame) {
     return protocol.process(frame);
 }
 
@@ -116,8 +116,4 @@ string ConnectionHandler::toStompFrame(string& msg) {
     return encdec.toStompFrame(msg);
 }
 
-ConnectionHandler::ConnectionHandler(ConnectionHandler &handler)
-        : host_(handler.host_), port_(handler.port_), encdec(handler.encdec), protocol(handler.protocol),
-          socket_(handler.socket_) {
-                      //  io_service_(handler.io_service_), socket_(handler.socket_), {
-}
+

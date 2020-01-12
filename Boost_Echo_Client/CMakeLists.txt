@@ -10,8 +10,6 @@ add_executable(Boost_Echo_Client
         src/connectionHandler.cpp
         include/UserData.h
         src/UserData.cpp
-        include/Frame.h
-        src/Frame.cpp
         include/StompMessagingProtocol.h
         src/StompMessagingProtocol.cpp
         include/StompEncoderDecoder.h

@@ -4,9 +4,8 @@
 #include <string>
 #include <iostream>
 #include <boost/asio.hpp>
-#include "StompEncoderDecoder.h"
-#include "StompMessagingProtocol.h"
-#include "Frame.h"
+#include <StompEncoderDecoder.h>
+#include <StompMessagingProtocol.h>
 
 using boost::asio::ip::tcp;
 
@@ -21,9 +20,8 @@ private:
  
 public:
     ConnectionHandler(std::string host, short port);
-    ConnectionHandler(ConnectionHandler &handler);
     virtual ~ConnectionHandler();
-    string process(Frame& frame);
+    string process(string& frame);
     string toStompFrame(string& msg);
 
     // Connect to the remote machine
@@ -56,7 +54,6 @@ public:
     // Close down the connection properly.
     void close();
 
-    ConnectionHandler(ConnectionHandler handler);
 }; //class ConnectionHandler
  
 #endif
