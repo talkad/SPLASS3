@@ -11,15 +11,13 @@ using boost::asio::ip::tcp;
 
 class ConnectionHandler{
 private:
-    const std::string host_;
-	const short port_;
 	boost::asio::io_service io_service_;   // Provides core I/O functionality
 	tcp::socket socket_;
 	StompEncoderDecoder encdec;
     StompMessagingProtocol protocol;
  
 public:
-    ConnectionHandler(std::string host, short port);
+    ConnectionHandler();
     virtual ~ConnectionHandler();
     string process(string& frame);
     string toStompFrame(string& msg);

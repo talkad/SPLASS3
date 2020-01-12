@@ -3,10 +3,10 @@
 
 UserData* UserData::instance = 0;
 
-void UserData::initiate(string &name) { //TODO: delete this pointer at the end of the connection- delete UserData::getInstance()
+void UserData::initiate(string &name, string& host, short port) { //TODO: delete this pointer at the end of the connection- delete UserData::getInstance()
     if (instance == 0)
     {
-        instance = new UserData(name);
+        instance = new UserData(name, host, port);
     }
 }
 
@@ -14,7 +14,8 @@ UserData* UserData::getInstance() {
     return instance;
 }
 
-UserData::UserData(string& name): subscription_id_counter(0), receipt_id_counter(0) ,my_name(name){}
+UserData::UserData(string& name, string& host, short port):
+    subscription_id_counter(0), receipt_id_counter(0) ,my_name(name),host_(host),port_(port){}
 
 string& UserData::getName() {
     return my_name;
@@ -68,3 +69,6 @@ string UserData::getBooks() {
         books=books.substr(0,books.length()-1);
     return books;
 }
+
+short UserData::getPort() { return port_; }
+string& UserData::getHost() { return host_; }

@@ -15,6 +15,8 @@ void writeTask(ConnectionHandler connectionHandler){
         std::cin.getline(buf, bufsize);
         string line(buf);
         string frameOut=connectionHandler.toStompFrame(line);
+        if(line.find("login") != string::npos)
+            connectionHandler.connect();
         if (!connectionHandler.sendFrame(frameOut)) {
             std::cout << "Disconnected. Exiting...\n" << std::endl;
             break;
@@ -44,23 +46,23 @@ void readTask(ConnectionHandler connectionHandler){
 
 
 
+using namespace boost;
 
 int main (int argc, char *argv[]) {
     
-    ConnectionHandler connectionRead(host, port);
-    ConnectionHandler connectionWrite(host,port);
-    if (!connectionRead.connect() && !connectionWrite.connect()) {
-        printf("Could not connect to server");
-        return 1;
-    }
+    ConnectionHandler connectionRead;
+    ConnectionHandler connectionWrite;
 
-    using namespace boost;
+//        if (!connectionRead.connect() && !connectionWrite.connect()) {
+//            printf("Could not connect to server");
+//            return 1;
+//        }
 
-//    thread thread_1 = thread(writeTask, &connectionWrite);
-//    thread thread_2 = thread(readTask, &connectionRead);
-//
-//    thread_2.join();
-//    thread_1.join();
+    thread thread_1 = thread(writeTask, &connectionWrite);
+    thread thread_2 = thread(readTask, &connectionRead);
+
+    thread_2.join();
+    thread_1.join();
 
     return 0;
 }

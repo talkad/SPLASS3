@@ -13,6 +13,7 @@ public :
     string toStompFrame(const string& msg);
     static void splitSentence(const string& msg, std::vector<string>& out);
 
+    int indexOf(string &text, string &pattern);
 };
 
 

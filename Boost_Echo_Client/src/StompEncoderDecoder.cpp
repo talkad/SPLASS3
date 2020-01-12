@@ -1,6 +1,18 @@
 #include "StompEncoderDecoder.h"
 #include <unordered_map>
+#include <connectionHandler.h>
 
+int StompEncoderDecoder::indexOf(string &text, string &pattern) {
+    std::string::size_type loc = text.find(pattern, 0);
+    if(loc != std::string::npos)
+    {
+        return loc;
+    }
+    else
+    {
+        return -1;
+    }
+}
 
 string StompEncoderDecoder::toStompFrame(const string& msg) {
     string frame="";
@@ -9,11 +21,15 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
     string command=wordsVector.at(0);
 
     if(command=="login"){
+        string colon=":";
+        int index=indexOf(wordsVector.at(1),colon);
+        string host=wordsVector.at(1).substr(0,index-1);
+        string port=wordsVector.at(1).substr(index+1);
         frame+="CONNECT\n";
         frame+="accept-version: 1.2\n";
         frame+="host:"+wordsVector.at(1)+"\n";
         frame+="login:"+wordsVector.at(2)+"\n";
-        UserData::initiate(wordsVector.at(2));
+        UserData::initiate(wordsVector.at(2),host,std::stoi(port));
         frame+="passcode:"+wordsVector.at(3)+"\n";
         frame+="\n";
         frame+="^@";

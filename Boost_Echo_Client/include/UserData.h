@@ -11,7 +11,7 @@ using std::unordered_map;
 
 class UserData{
 public:
-    static void initiate(string& name);
+    static void initiate(string& name,string& host, short port);
     static UserData* getInstance();
     void addBook(string& genre,string& bookName);
     void remove(string& genre,string& bookName);
@@ -22,9 +22,11 @@ public:
     //check if book exists it inventory
     bool isExists(string basicString, string &bookName);
     string getBooks();
+    string& getHost();
+    short getPort();
 
 private:
-    UserData(string& name);
+    UserData(string& name, string& host, short port);
     static UserData* instance;
 
     int subscription_id_counter;
@@ -32,6 +34,9 @@ private:
     string my_name;
     unordered_map<string,string> borrow_map; //key- name of the book, value- the lender
     std:: unordered_map< string, vector<string> >inventory;
+
+    string host_;
+    short port_;
 };
 
 #endif //BOOST_ECHO_CLIENT_USERDATA_H
