@@ -1,8 +1,8 @@
 #include <connectionHandler.h>
 #include <UserData.h>
-#include <boost/asio.hpp>
 #include <thread>
 
+//#include <boost/asio.hpp>
 using std::string;
 
 void writeTask(ConnectionHandler* connectionHandler){
@@ -12,7 +12,7 @@ void writeTask(ConnectionHandler* connectionHandler){
         std::cin.getline(buf, bufsize);
         string line(buf);
         string frameOut=connectionHandler->toStompFrame(line);
-        if (!connectionHandler->sendFrame(frameOut)) {
+        if (!connectionHandler->connected() || !connectionHandler->sendFrame(frameOut)) {
             break;
         }
     }
@@ -23,7 +23,6 @@ void readTask(ConnectionHandler* connectionHandler){
         if(connectionHandler->connected()) {
             string answer;
             // Get back an answer: by using the expected number of bytes (len bytes + newline delimiter)
-            // We could also use: connectionHandler.getline(answer) and then get the answer without the newline char at the end
             if (!connectionHandler->getFrame(answer)) {
                 break;
             }

@@ -10,7 +10,7 @@ string StompMessagingProtocol::process(string& frame) {
     string command=lines.at(0);
 
     string colon=":";
-    for(int i=0;i<lines.size()-2;i++)
+    for(size_t i=0;i<lines.size()-2;i++)
     {
         string line=lines[i];
         int pos=indexOf(line,colon);
@@ -43,7 +43,7 @@ string StompMessagingProtocol::process(string& frame) {
 
         if(message_body.find(" wish to borrow ") != string::npos){
             string bookName;
-            for(int i=4;i<body.size();i++){
+            for(size_t i=4;i<body.size();i++){
                 bookName+=body[i];
                 if(i+1<body.size())
                     bookName+=" ";
@@ -64,7 +64,7 @@ string StompMessagingProtocol::process(string& frame) {
             string name=body[body.size()-1];
             if(UserData::getInstance()->getName()==name) {
                 string bookName;
-                for (int i = 1; i < body.size() - 2; i++) {
+                for (size_t i = 1; i < body.size() - 2; i++) {
                     bookName += body[i];
                     if (i + 1 < body.size())
                         bookName += " ";

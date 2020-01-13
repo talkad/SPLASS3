@@ -67,7 +67,7 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
 }
 
 bool ConnectionHandler::getFrame(std::string &frame) {
-    return getFrameAscii(frame, '\n');
+    return getFrameAscii(frame, '\0');
 }
 
 bool ConnectionHandler::sendFrame(std::string &frame) {
@@ -97,10 +97,8 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
 bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter) {
 	bool result=sendBytes(frame.c_str(),frame.length());
 	if(!result) return false;
-	return sendBytes(&delimiter,1);
+    return sendBytes(&delimiter,1); //sends the delimiter
 }
-
-
 
 // Close down the connection properly.
 void ConnectionHandler::close() {
@@ -117,8 +115,12 @@ string ConnectionHandler::process(string& frame) {
 
 string ConnectionHandler::toStompFrame(string& msg) {
     string result=encdec.toStompFrame(msg);
-    if(UserData::getInstance()->getHost().length()>0)
+    if(UserData::getInstance()->getHost().length()>0) {
         connect();
+        printf("try connect to: %s \n ",UserData::getInstance()->getHost().c_str());
+    }
+    if(msg=="logout")
+        close();
     return encdec.toStompFrame(msg);
 }
 
