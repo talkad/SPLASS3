@@ -15,12 +15,14 @@ private:
 	tcp::socket socket_;
 	StompEncoderDecoder encdec;
     StompMessagingProtocol protocol;
+    bool isConnected;
  
 public:
     ConnectionHandler();
     virtual ~ConnectionHandler();
     string process(string& frame);
     string toStompFrame(string& msg);
+    bool connected();
 
     // Connect to the remote machine
     bool connect();

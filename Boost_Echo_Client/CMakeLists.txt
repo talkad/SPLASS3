@@ -3,7 +3,7 @@ project(Boost_Echo_Client)
 
 set(CMAKE_CXX_STANDARD  14)
 
-include_directories(include)
+include_directories(include libpthread)
 
 add_executable(Boost_Echo_Client
         include/connectionHandler.h
@@ -19,4 +19,4 @@ add_executable(Boost_Echo_Client
 
 find_package(Boost 1.56 REQUIRED COMPONENTS date_time filesystem iostreams)
 
-target_link_libraries(Boost_Echo_Client Boost::date_time Boost::filesystem Boost::iostreams)
+target_link_libraries(Boost_Echo_Client Boost::date_time Boost::filesystem Boost::iostreams -lpthread)

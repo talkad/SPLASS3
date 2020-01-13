@@ -3,8 +3,9 @@
 
 UserData* UserData::instance = 0;
 
-void UserData::initiate(string &name, string& host, short port) { //TODO: delete this pointer at the end of the connection- delete UserData::getInstance()
-    if (instance == 0)
+void UserData::initiate(string &name, string& host, short port) {
+    printf("name: %s \n host: %s\n port: %d\n",name.c_str(),host.c_str(),port);
+    if (instance == nullptr)
     {
         instance = new UserData(name, host, port);
     }
@@ -58,8 +59,8 @@ bool UserData::isExists(string genre, string &bookName) {
     return false;
 }
 
-string UserData::getBooks() {
-    string books="";
+string& UserData::getBooks() {
+    string books;
     for(auto genre: inventory){
         for(string book: genre.second){
             books+=book+",";

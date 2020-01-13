@@ -21,7 +21,7 @@ public:
     string& getLender(string& bookName);
     //check if book exists it inventory
     bool isExists(string basicString, string &bookName);
-    string getBooks();
+    string& getBooks();
     string& getHost();
     short getPort();
 

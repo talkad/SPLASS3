@@ -8,7 +8,7 @@ using std::cerr;
 using std::endl;
 using std::string;
  
-ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_){}
+ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isConnected(false){}
     
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -27,6 +27,10 @@ bool ConnectionHandler::connect() {
         return false;
     }
     return true;
+}
+
+bool ConnectionHandler::connected() {
+    return isConnected;
 }
 
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
@@ -54,6 +58,7 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
         }
 		if(error)
 			throw boost::system::system_error(error);
+		isConnected=true;
     } catch (std::exception& e) {
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;
@@ -111,6 +116,9 @@ string ConnectionHandler::process(string& frame) {
 }
 
 string ConnectionHandler::toStompFrame(string& msg) {
+    string result=encdec.toStompFrame(msg);
+    if(UserData::getInstance()->getHost().length()>0)
+        connect();
     return encdec.toStompFrame(msg);
 }
 

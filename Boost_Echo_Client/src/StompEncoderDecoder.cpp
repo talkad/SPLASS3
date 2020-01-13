@@ -23,7 +23,7 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
     if(command=="login"){
         string colon=":";
         int index=indexOf(wordsVector.at(1),colon);
-        string host=wordsVector.at(1).substr(0,index-1);
+        string host=wordsVector.at(1).substr(0,index);
         string port=wordsVector.at(1).substr(index+1);
         frame+="CONNECT\n";
         frame+="accept-version: 1.2\n";

@@ -1,44 +1,38 @@
-#include <cstdlib>
 #include <connectionHandler.h>
 #include <UserData.h>
-#include <boost/thread.hpp>
+#include <boost/asio.hpp>
+#include <thread>
 
-/**
-* This code assumes that the server replies the exact text the client sent it (as opposed to the practical session example)
-*/
 using std::string;
 
-void writeTask(ConnectionHandler connectionHandler){
+void writeTask(ConnectionHandler* connectionHandler){
     while (true) {
         const short bufsize = 1024;
         char buf[bufsize];
         std::cin.getline(buf, bufsize);
         string line(buf);
-        string frameOut=connectionHandler.toStompFrame(line);
-        if(line.find("login") != string::npos)
-            connectionHandler.connect();
-        if (!connectionHandler.sendFrame(frameOut)) {
-            std::cout << "Disconnected. Exiting...\n" << std::endl;
+        string frameOut=connectionHandler->toStompFrame(line);
+        if (!connectionHandler->sendFrame(frameOut)) {
             break;
         }
     }
 }
 
-void readTask(ConnectionHandler connectionHandler){
+void readTask(ConnectionHandler* connectionHandler){
     while (true) {
-        string answer;
-        // Get back an answer: by using the expected number of bytes (len bytes + newline delimiter)
-        // We could also use: connectionHandler.getline(answer) and then get the answer without the newline char at the end
-        if (!connectionHandler.getFrame(answer)) {
-            std::cout << "Disconnected. Exiting...\n" << std::endl;
-            break;
-        }
-
-        string sendMsg=connectionHandler.process(answer);
-        if(sendMsg.length()>0){ //there is a response to the server
-            if (!connectionHandler.sendFrame(sendMsg)) {
-                std::cout << "Disconnected. Exiting...\n" << std::endl;
+        if(connectionHandler->connected()) {
+            string answer;
+            // Get back an answer: by using the expected number of bytes (len bytes + newline delimiter)
+            // We could also use: connectionHandler.getline(answer) and then get the answer without the newline char at the end
+            if (!connectionHandler->getFrame(answer)) {
                 break;
+            }
+
+            string sendMsg = connectionHandler->process(answer);
+            if (sendMsg.length() > 0) { //there is a response to the server
+                if (!connectionHandler->sendFrame(sendMsg)) {
+                    break;
+                }
             }
         }
     }
@@ -50,19 +44,16 @@ using namespace boost;
 
 int main (int argc, char *argv[]) {
     
-    ConnectionHandler connectionRead;
-    ConnectionHandler connectionWrite;
+    ConnectionHandler* connection = new ConnectionHandler();
 
-//        if (!connectionRead.connect() && !connectionWrite.connect()) {
-//            printf("Could not connect to server");
-//            return 1;
-//        }
+    std::thread thread_1 = std::thread(writeTask, connection);
+    //std::thread thread_2 = std::thread(readTask, connection);
 
-    thread thread_1 = thread(writeTask, &connectionWrite);
-    thread thread_2 = thread(readTask, &connectionRead);
-
-    thread_2.join();
+    //thread_2.join();
     thread_1.join();
+
+    //TODO: delete this pointer at the end of the connection- delete UserData::getInstance()
+    delete connection;
 
     return 0;
 }
