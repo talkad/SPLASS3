@@ -10,7 +10,7 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
     private boolean shouldTerminate=false;
 
     @Override
-    public void start(int connectionId, Connections<String> connections) {
+    public void start(int connectionId, Connections connections) {
         this.connectionId=connectionId;
         this.connection=connections;
     }
@@ -119,21 +119,24 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
 
     //this function handles all possible scenarios of login- CONNECT frame
     private void connectFrameResponse(Frame frame) {
+        boolean responsed=true;
         Hashtable<String,String> headers=frame.getHeaders();
         String name=headers.get("login");
         String pwd=headers.get("passcode");
-        if(BookClub.getInstance().isUsernameExists(name)){ //the username exists in the server data
-            if(BookClub.getInstance().confirmPwd(name,pwd)){
-                if(!BookClub.getInstance().isUserConnected(name)){
-                    BookClub.getInstance().getUserByName(name).login();
+        BookClub bookClub=BookClub.getInstance();
+        if(bookClub.isUsernameExists(name)){ //the username exists in the server data
+            if(bookClub.confirmPwd(name,pwd)){
+                if(!bookClub.isUserConnected(name)){
+                    bookClub.getUserByName(name).login();
                     Frame connected=new Frame("CONNECTED","login successful");
                     connected.addHeader("version","1.2");
-                    connection.send(connectionId,connected.toString());
+                    bookClub.updateId(connectionId,name);
+                    responsed=connection.send(connectionId,connected.toString());
                 }
                 else{ //this client was connected already
                     Frame error=new Frame("ERROR","User already logged in");
                     error.addHeader("message","User already logged in");
-                    connection.send(connectionId,error.toString());
+                    responsed=connection.send(connectionId,error.toString());
                     shouldTerminate=true;
                     connection.disconnect(connectionId);
                 }
@@ -141,17 +144,19 @@ public class StompMessagingProtocol implements bgu.spl.net.api.StompMessagingPro
             else{ //user exists but wrong pwd
                 Frame error=new Frame("ERROR","Wrong password");
                 error.addHeader("message","Wrong password");
-                connection.send(connectionId,error.toString());
+                responsed=connection.send(connectionId,error.toString());
                 shouldTerminate=true;
                 connection.disconnect(connectionId);
             }
         }
         else{//new user login
-            BookClub.getInstance().createNewUser(name,pwd);
-            BookClub.getInstance().getUserByName(name).login();
+            bookClub.createNewUser(connectionId,name,pwd);
+            bookClub.getUserByName(name).login();
             Frame connected=new Frame("CONNECTED","login successful");
             connected.addHeader("version","1.2");
-            connection.send(connectionId,connected.toString());
+            responsed=connection.send(connectionId,connected.toString());
         }
+        //if (!responsed)
+            //than server sends to not connected client
     }
 }

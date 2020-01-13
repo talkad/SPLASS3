@@ -15,6 +15,7 @@ public class ConnectionsImpl implements Connections<String> {
     private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> subIdClientId_genre;// key- clientid, map that: key-subscriptionid, element-genrename
 
 
+
     //look at BookClub (singleton)
     //i defined these data structure there, you dont need to define them here
     // i am not going to touch your code- do whatever seems right to you
@@ -33,8 +34,11 @@ public class ConnectionsImpl implements Connections<String> {
 
     @Override
     public boolean send(int connectionId, String msg) {
-        handlersMap.get(connectionId).send(msg);
-        return true;// just for the hell of it
+        if (handlersMap.containsKey(connectionId))
+            handlersMap.get(connectionId).send(msg);
+        else
+            return false;
+        return true;
     }
 
     @Override
@@ -51,6 +55,7 @@ public class ConnectionsImpl implements Connections<String> {
         } catch (IOException ignored) {
         }
         handlersMap.remove(connectionId);
+
     }
 
     public void addConnection(int connectionId, ConnectionHandler handler) {

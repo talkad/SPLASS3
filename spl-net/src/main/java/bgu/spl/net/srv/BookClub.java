@@ -54,8 +54,11 @@ public class BookClub {
         return user.getPwd().equals((pwd));
     }
 
-    public void createNewUser(String name,String pwd){
-        users.putIfAbsent(name,new User(name,pwd));
+    public void createNewUser(int id,String name,String pwd){
+        users.putIfAbsent(name,new User(id,name,pwd));
+    }
+    public void updateId(int newId,String name) {
+        users.get(name).updateId(newId);
     }
 
     public User getUserByName(String name){

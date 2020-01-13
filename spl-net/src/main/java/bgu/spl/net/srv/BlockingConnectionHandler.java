@@ -16,11 +16,14 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<Fr
     private BufferedOutputStream out;
     private volatile boolean connected = true;
     private int connectionId;
+    private Connections connections;
 
-    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<Frame> reader, StompMessagingProtocol protocol,int connectionId) {
+    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<Frame> reader, StompMessagingProtocol protocol,int connectionId,Connections connections) {
         this.sock = sock;
         this.encdec = reader;
         this.protocol = protocol;
+        this.connections=connections;
+        protocol.start(connectionId,connections);
         this.connectionId=connectionId;
     }
 
@@ -52,7 +55,14 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<Fr
     }
 
     @Override
-    public void send(Frame msg) {
-        //IMPLEMENT IF NEEDED
+    public void send(Frame msg) {// not sure
+        try {
+            out.write(encdec.encode(msg));
+            out.flush();
+        }
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
+
     }
 }

@@ -4,18 +4,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class User {
-    private static int id_counter=0;
+
     private String name;
     private String pwd;
     private boolean logged_in;
     private int id;
     private ConcurrentHashMap<String,Integer> genre_map;//map for every id its genre name
 
-    public User(String name, String pwd) {
+    public User(int id,String name, String pwd) {
         this.name = name;
         this.pwd = pwd;
-        this.id=id_counter;
-        id_counter++;
+        this.id=id;
         this.logged_in = false;
         genre_map=new ConcurrentHashMap<>();
     }
@@ -33,6 +32,8 @@ public class User {
     }
 
     public int getId() { return id; }
+
+    public void updateId(int newId){id=newId;}
 
     public boolean isLogged_in() {
         return logged_in;
