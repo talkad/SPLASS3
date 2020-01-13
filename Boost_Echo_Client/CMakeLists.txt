@@ -3,7 +3,7 @@ project(Boost_Echo_Client)
 
 set(CMAKE_CXX_STANDARD  14)
 
-include_directories(include libpthread libboost)
+include_directories(include libpthread)
 
 add_executable(Boost_Echo_Client
         include/connectionHandler.h

@@ -2,7 +2,7 @@
 # to use Makefile variables later in the Makefile: $()
 CC = g++
 CFLAGS  = -g -Wall -Weffc++ -std=c++11
-LFLAGS  = -L/usr/libz -lpthread -lboost
+LFLAGS  = -pthread -lboost_system
 
 # All Targets
 all: client
@@ -12,7 +12,7 @@ all: client
 client: bin/Client.o bin/connectionHandler.o bin/StompEncoderDecoder.o bin/StompMessagingProtocol.o bin/UserData.o
 	@echo 'Building target: client'
 	@echo 'Invoking: C++ Linker'
-	$(CC) -o bin/client bin/Client.o bin/connectionHandler.o bin/StompEncoderDecoder.o bin/StompMessagingProtocol.o bin/UserData.o
+	$(CC) -o bin/client bin/Client.o bin/connectionHandler.o bin/StompEncoderDecoder.o bin/StompMessagingProtocol.o bin/UserData.o $(LFLAGS)
 	@echo 'Finished building target: client'
 	@echo ' '
 
