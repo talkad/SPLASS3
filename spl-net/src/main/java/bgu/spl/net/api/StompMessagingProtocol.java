@@ -1,13 +1,15 @@
 package bgu.spl.net.api;
 
 import bgu.spl.net.srv.Connections;
+
+import bgu.spl.net.srv.ConnectionsImpl;
 import bgu.spl.net.srv.Frame;
 
 public interface StompMessagingProtocol{
 	/**
 	 * Used to initiate the current client protocol with it's personal connection ID and the connections implementation
 	**/
-    void start(int connectionId, Connections<String> connections);    
+    void start(int connectionId, ConnectionsImpl connections);
 
     void process(Frame frame);
 

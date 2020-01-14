@@ -12,5 +12,4 @@ public interface Connections<T> {
 
     void addConnection(int connectionId, ConnectionHandler handler);
 
-
 }
