@@ -8,7 +8,8 @@ using std::cerr;
 using std::endl;
 using std::string;
  
-ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isConnected(false), runFlag(true){}
+ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isLogin(false),
+        runFlag(true), connected(false){}
     
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -21,7 +22,8 @@ bool ConnectionHandler::connect() {
 		socket_.connect(endpoint, error);
 		if (error)
 			throw boost::system::system_error(error);
-        isConnected=true;
+        connected=true;
+        isLogin=true;
     }
     catch (std::exception& e) {
         std::cout<< "Could not connect to server" << std::endl;
@@ -30,8 +32,8 @@ bool ConnectionHandler::connect() {
     return true;
 }
 
-bool ConnectionHandler::connected() {
-    return isConnected;
+bool ConnectionHandler::isLoggedIn() {
+    return isLogin;
 }
 
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
@@ -121,12 +123,13 @@ string ConnectionHandler::process(string& frame) {
 
 string ConnectionHandler::toStompFrame(string& msg) {
     string result=encdec.toStompFrame(msg);
-//    if(msg=="logout") {
-//        isConnected = false;
-//    }
-    if(!connected() && UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
+    if(!connected && UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
         connect();
     }
+    else if(msg.find("login")!=string::npos){
+        isLogin=true;
+    }
+
     return result;
 }
 
@@ -138,7 +141,7 @@ void ConnectionHandler::terminate() {
     runFlag=false;
 }
 
-void ConnectionHandler::setConnected(bool connect) {
-    isConnected=connect;
+void ConnectionHandler::setLogin(bool connect) {
+    isLogin=connect;
 }
 

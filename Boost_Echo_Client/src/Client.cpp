@@ -15,10 +15,10 @@ void writeTask(ConnectionHandler* connectionHandler){
             connectionHandler->terminate();
 
         string frameOut=connectionHandler->toStompFrame(line);
-        if (connectionHandler->connected()) {
+        if (connectionHandler->isLoggedIn()) {
             connectionHandler->sendFrame(frameOut);
             if(line=="logout") {
-                connectionHandler->setConnected(false);
+                connectionHandler->setLogin(false);
             }
         }
     }
@@ -26,14 +26,11 @@ void writeTask(ConnectionHandler* connectionHandler){
 //192.168.43.45:7777
 void readTask(ConnectionHandler* connectionHandler){
     while (connectionHandler->isRunning()) {
-        if(connectionHandler->connected()) {
+        if(connectionHandler->isLoggedIn()) {
             string answer;
-            // Get back an answer: by using the expected number of bytes (len bytes + newline delimiter)
             if (!connectionHandler->getFrame(answer)) {
                 break;
             }
-
-            //printf("xxxxx \n %s \n xxxxxxxx \n",answer.c_str());
 
             string sendMsg = connectionHandler->process(answer);
             if (sendMsg.length() > 0) { //there is a response to the server
