@@ -1,84 +1,96 @@
-//
-// Created by amir on 07/01/2020.
-//
-
 #include "StompEncoderDecoder.h"
 #include <unordered_map>
+#include <connectionHandler.h>
 
-
-string StompEncoderDecoder::decodeMessage(string msg) {
-
+int StompEncoderDecoder::indexOf(string &text, string &pattern) {
+    std::string::size_type loc = text.find(pattern, 0);
+    if(loc != std::string::npos)
+    {
+        return loc;
+    }
+    else
+    {
+        return -1;
+    }
 }
 
-
-string StompEncoderDecoder::toStompFrame(string msg) {
+string StompEncoderDecoder::toStompFrame(const string& msg) {
     string frame="";
     std::vector<string> wordsVector;
     splitSentence(msg, wordsVector);
     string command=wordsVector.at(0);
 
-    if(command.compare("login")==0){
+    if(command=="login"){
+        string colon=":";
+        int index=indexOf(wordsVector.at(1),colon);
+        string host=wordsVector.at(1).substr(0,index);
+        string port=wordsVector.at(1).substr(index+1);
         frame+="CONNECT\n";
         frame+="accept-version: 1.2\n";
         frame+="host:"+wordsVector.at(1)+"\n";
         frame+="login:"+wordsVector.at(2)+"\n";
+        UserData::initiate(wordsVector.at(2),host,std::stoi(port));
         frame+="passcode:"+wordsVector.at(3)+"\n";
         frame+="\n";
         frame+="^@";
-
     }
-    if(command.compare("join")==0){
+    else if(command=="join"){
         frame+="SUBSCRIBE\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
-        frame+="id:"+ std::to_string(subscription_id_counter)+"\n";
-        subscription_id_counter++;//not thread safe
-        frame+="receipt:"+std::to_string(receipt_id_counter)+"\n";
-        receipt_id_counter++;//not thread safe;
+        frame+="id:"+ std::to_string(UserData::getInstance()->generateSubID())+"\n";
+        frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
         frame+="\n";
         frame+="^@";
     }
-    if(command.compare("add")==0){
+    else if(command=="exit"){
+        frame+="UNSUBSCRIBE\n";
+        frame+="destination:"+wordsVector.at(1)+"\n";
+        frame+="id:"+ std::to_string(UserData::getInstance()->generateSubID())+"\n";
+        frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
+        frame+="\n";
+        frame+="^@";
+    }
+    else if(command=="add"){
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+= my_name +" has added the book "+ wordsVector.at(2)+"\n";
+        frame+= UserData::getInstance()->getName() +" has added the book "+ wordsVector.at(2)+"\n";
+        UserData::getInstance()->addBook(wordsVector.at(1),wordsVector.at(2));
         frame+="^@";
     }
-    if(command.compare("borrow")==0){//there is a pingpong with server and we send another message of "taking book"
+    else if(command=="borrow"){//the response is handle in the protocol
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+= my_name +" wish to borrow "+wordsVector.at(2);
+        frame+= UserData::getInstance()->getName() +" wish to borrow "+wordsVector.at(2);
         frame+="\n";
         frame+="^@";
     }
-    if(command.compare("return")==0){
+    else if(command=="return"){
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+="Returning "+ wordsVector.at(2) + " to " + borrow_map.at(wordsVector.at(2))+"\n";
+        frame+="Returning "+ wordsVector.at(2) + " to " + UserData::getInstance()->getLender(wordsVector.at(2))+"\n";
+        UserData::getInstance()->remove(wordsVector.at(1), wordsVector.at(2));
         frame+="^@";
     }
-    if(command.compare("status")==0){ //there is a pingpong with server and we send another message of "taking book"
+    else if(command=="status"){ //the response is handle in the protocol
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
         frame+= "book status\n";
         frame+="^@";
     }
-    if(command.compare("logout")==0){
+    else if(command=="logout"){
         frame+="DISCONNECT\n";
-        frame+="receipt:"+std::to_string(receipt_id_counter)+"\n";
-        receipt_id_counter++;//not thread safe;
+        frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
         frame+="\n";
         frame+="^@";
     }
-
-
-
+    return frame;
 }
 
-void StompEncoderDecoder::splitSentence(string msg, std::vector<string> &out) {
+void StompEncoderDecoder::splitSentence(const string& msg, std::vector<string> &out) {
     size_t start;
     size_t end = 0;
     while ((start = msg.find_first_not_of(' ', end)) != std::string::npos)
@@ -87,3 +99,6 @@ void StompEncoderDecoder::splitSentence(string msg, std::vector<string> &out) {
         out.push_back(msg.substr(start, end - start));
     }
 }
+
+
+
