@@ -15,7 +15,6 @@ void writeTask(ConnectionHandler* connectionHandler){
             connectionHandler->terminate();
 
         string frameOut=connectionHandler->toStompFrame(line);
-
         if (connectionHandler->connected()) {
             connectionHandler->sendFrame(frameOut);
             if(line=="logout") {

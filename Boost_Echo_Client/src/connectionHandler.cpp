@@ -127,7 +127,7 @@ string ConnectionHandler::toStompFrame(string& msg) {
     if(!connected() && UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
         connect();
     }
-    return encdec.toStompFrame(msg);
+    return result;
 }
 
 bool ConnectionHandler::isRunning() {
