@@ -16,6 +16,7 @@ private:
 	StompEncoderDecoder encdec;
     StompMessagingProtocol protocol;
     bool isConnected;
+    bool runFlag;
  
 public:
     ConnectionHandler();
@@ -23,6 +24,8 @@ public:
     string process(string& frame);
     string toStompFrame(string& msg);
     bool connected();
+    bool isRunning();
+    void terminate();
 
     // Connect to the remote machine
     bool connect();

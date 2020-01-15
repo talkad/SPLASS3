@@ -8,7 +8,7 @@ using std::cerr;
 using std::endl;
 using std::string;
  
-ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isConnected(false){}
+ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isConnected(false), runFlag(true){}
     
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -115,13 +115,20 @@ string ConnectionHandler::process(string& frame) {
 
 string ConnectionHandler::toStompFrame(string& msg) {
     string result=encdec.toStompFrame(msg);
-    if(UserData::getInstance()->getHost().length()>0) {
-        connect();
-        printf("try connect to: %s \n ",UserData::getInstance()->getHost().c_str());
+    if(msg=="logout") {
+        isConnected = false;
     }
-    if(msg=="logout")
-        close();
+    else if(UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
+        connect();
+    }
     return encdec.toStompFrame(msg);
 }
 
+bool ConnectionHandler::isRunning() {
+    return runFlag;
+}
+
+void ConnectionHandler::terminate() {
+    runFlag=false;
+}
 

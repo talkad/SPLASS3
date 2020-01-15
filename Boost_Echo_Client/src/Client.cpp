@@ -6,20 +6,25 @@
 using std::string;
 
 void writeTask(ConnectionHandler* connectionHandler){
-    while (true) {
+    while (connectionHandler->isRunning()) {
         const short bufsize = 1024;
         char buf[bufsize];
         std::cin.getline(buf, bufsize);
         string line(buf);
+        if(line=="bye")
+            connectionHandler->terminate();
+
         string frameOut=connectionHandler->toStompFrame(line);
-        if (!connectionHandler->connected() || !connectionHandler->sendFrame(frameOut)) {
-            break;
+
+        if (connectionHandler->connected()) {
+            //printf("loged in successfuly");
+            connectionHandler->sendFrame(frameOut);
         }
     }
 }
 
 void readTask(ConnectionHandler* connectionHandler){
-    while (true) {
+    while (connectionHandler->isRunning()) {
         if(connectionHandler->connected()) {
             string answer;
             // Get back an answer: by using the expected number of bytes (len bytes + newline delimiter)
@@ -46,9 +51,9 @@ int main (int argc, char *argv[]) {
     ConnectionHandler* connection = new ConnectionHandler();
 
     std::thread thread_1 = std::thread(writeTask, connection);
-    //std::thread thread_2 = std::thread(readTask, connection);
+    std::thread thread_2 = std::thread(readTask, connection);
 
-    //thread_2.join();
+    thread_2.join();
     thread_1.join();
 
     //TODO: delete this pointer at the end of the connection- delete UserData::getInstance()

@@ -87,7 +87,6 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
         frame+="\n";
         frame+="^@";
     }
-    printf("%s \n",frame.c_str());
     return frame;
 }
 
