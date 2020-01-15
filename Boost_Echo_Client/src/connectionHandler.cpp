@@ -21,6 +21,7 @@ bool ConnectionHandler::connect() {
 		socket_.connect(endpoint, error);
 		if (error)
 			throw boost::system::system_error(error);
+        isConnected=true;
     }
     catch (std::exception& e) {
         std::cout<< "Could not connect to server" << std::endl;
@@ -56,11 +57,12 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
         while (!error && bytesToWrite > tmp ) {
 			tmp += socket_.write_some(boost::asio::buffer(bytes + tmp, bytesToWrite - tmp), error);
         }
-		if(error)
-			throw boost::system::system_error(error);
-		isConnected=true;
+		if(error) {
+            throw boost::system::system_error(error);
+        }
     } catch (std::exception& e) {
-        std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
+        //std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
+        printf("connection closed :(");
         return false;
     }
     return true;
@@ -71,6 +73,7 @@ bool ConnectionHandler::getFrame(std::string &frame) {
 }
 
 bool ConnectionHandler::sendFrame(std::string &frame) {
+    printf(" try send: \n %s \n",frame.c_str());
     return sendFrameAscii(frame, '\0');
 }
 
@@ -88,8 +91,9 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
 			frame.append(1, ch);
 	}while (delimiter != ch);
     } catch (std::exception& e) {
-	std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
-	return false;
+        printf("connection closed :(");
+        //std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
+	    return false;
     }
     return true;
 }
@@ -105,7 +109,9 @@ void ConnectionHandler::close() {
     try{
         socket_.close();
     } catch (...) {
-        std::cout << "closing failed: connection already closed" << std::endl;
+        printf("closing failed: connection already closed");
+
+        //std::cout << "closing failed: connection already closed" << std::endl;
     }
 }
 
@@ -115,10 +121,10 @@ string ConnectionHandler::process(string& frame) {
 
 string ConnectionHandler::toStompFrame(string& msg) {
     string result=encdec.toStompFrame(msg);
-    if(msg=="logout") {
-        isConnected = false;
-    }
-    else if(UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
+//    if(msg=="logout") {
+//        isConnected = false;
+//    }
+    if(!connected() && UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
         connect();
     }
     return encdec.toStompFrame(msg);
@@ -130,5 +136,9 @@ bool ConnectionHandler::isRunning() {
 
 void ConnectionHandler::terminate() {
     runFlag=false;
+}
+
+void ConnectionHandler::setConnected(bool connect) {
+    isConnected=connect;
 }
 

@@ -24,6 +24,8 @@ public:
     string getBooks();
     string& getHost();
     short getPort();
+    void addSubscription(string genre,int id);
+    int getSubByGenre(string genre);
 
 private:
     UserData(string& name, string& host, short port);
@@ -33,7 +35,8 @@ private:
     int receipt_id_counter;
     string my_name;
     unordered_map<string,string> borrow_map; //key- name of the book, value- the lender
-    std:: unordered_map< string, vector<string> >inventory;
+    unordered_map< string, vector<string> >inventory;
+    unordered_map<string, int> subscription_map;
 
     string host_;
     short port_;

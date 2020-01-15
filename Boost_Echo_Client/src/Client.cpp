@@ -17,12 +17,14 @@ void writeTask(ConnectionHandler* connectionHandler){
         string frameOut=connectionHandler->toStompFrame(line);
 
         if (connectionHandler->connected()) {
-            //printf("loged in successfuly");
             connectionHandler->sendFrame(frameOut);
+            if(line=="logout") {
+                connectionHandler->setConnected(false);
+            }
         }
     }
 }
-
+//192.168.43.45:7777
 void readTask(ConnectionHandler* connectionHandler){
     while (connectionHandler->isRunning()) {
         if(connectionHandler->connected()) {
@@ -31,6 +33,8 @@ void readTask(ConnectionHandler* connectionHandler){
             if (!connectionHandler->getFrame(answer)) {
                 break;
             }
+
+            //printf("xxxxx \n %s \n xxxxxxxx \n",answer.c_str());
 
             string sendMsg = connectionHandler->process(answer);
             if (sendMsg.length() > 0) { //there is a response to the server
@@ -41,7 +45,6 @@ void readTask(ConnectionHandler* connectionHandler){
         }
     }
 }
-
 
 
 using namespace boost;

@@ -15,7 +15,7 @@ UserData* UserData::getInstance() {
 }
 
 UserData::UserData(string& name, string& host, short port):
-    subscription_id_counter(0), receipt_id_counter(0) ,my_name(name), borrow_map(), inventory() ,host_(host),port_(port){}
+    subscription_id_counter(0), receipt_id_counter(0) ,my_name(name), borrow_map(), inventory(), subscription_map() ,host_(host),port_(port){}
 
 string& UserData::getName() {
     return my_name;
@@ -72,3 +72,11 @@ string UserData::getBooks() {
 
 short UserData::getPort() { return port_; }
 string& UserData::getHost() { return host_; }
+
+void UserData::addSubscription(string genre, int id) {
+    subscription_map.insert({genre,id});
+}
+
+int UserData::getSubByGenre(string genre) {
+    return subscription_map[genre];
+}

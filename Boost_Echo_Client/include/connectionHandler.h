@@ -23,6 +23,7 @@ public:
     virtual ~ConnectionHandler();
     string process(string& frame);
     string toStompFrame(string& msg);
+    void setConnected(bool connect);
     bool connected();
     bool isRunning();
     void terminate();

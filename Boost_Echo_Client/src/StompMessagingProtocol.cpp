@@ -23,8 +23,9 @@ string StompMessagingProtocol::process(string& frame) {
     }
 
     size_t body_index=frame.find("\n\n");
-    string message_body=frame.substr(body_index+2);
 
+    string body=frame.substr(body_index+2);
+    string message_body=body.substr(0,body.size()-2);
 
     string message;
     if(command=="CONNECTED"){

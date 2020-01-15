@@ -41,11 +41,12 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
         frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
         frame+="\n";
         frame+="^@";
+        UserData::getInstance()->addSubscription(wordsVector.at(1), UserData::getInstance()->generateSubID());
     }
     else if(command=="exit"){
         frame+="UNSUBSCRIBE\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
-        frame+="id:"+ std::to_string(UserData::getInstance()->generateSubID())+"\n";
+        frame+="id:"+ std::to_string(UserData::getInstance()->getSubByGenre(wordsVector.at(1)))+"\n";
         frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
         frame+="\n";
         frame+="^@";
