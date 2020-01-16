@@ -15,14 +15,15 @@ public class ConnectionsImpl implements Connections<String> {
 
     public ConnectionsImpl() {
         handlersMap = new ConcurrentHashMap<>();
-        messageIdCounter=new AtomicInteger(0);
+        messageIdCounter=new AtomicInteger(1);
     }
 
     @Override
     public boolean send(int connectionId, String msg) {
 
-        if (handlersMap.containsKey(connectionId))
-            handlersMap.get(connectionId).send(msg);
+        if (handlersMap.containsKey(connectionId)) {
+            handlersMap.get(connectionId).send(new Frame(msg));
+        }
         else
             return false;
         return true;
@@ -31,12 +32,15 @@ public class ConnectionsImpl implements Connections<String> {
     @Override
     public void send(String channel, String msg) {
         ConcurrentSkipListSet<Integer> idSet = GenreHandler.getInstance().getSubsOfGenre(channel);
-        for (Integer id : idSet) {
-            Frame frame=new Frame(msg);
-            frame.addHeader("Message-id:",""+ messageIdCounter.addAndGet(1));
-            frame.addHeader("subscription",""+ GenreHandler.getInstance().getSubscriptionId(id,channel));
-            String withIds=frame.toString();
-            send(id, withIds);
+        if(idSet!=null) {
+            for (Integer id : idSet) {
+                Frame frame = new Frame(msg);
+                int messageId = messageIdCounter.incrementAndGet();
+                frame.addHeader("Message-id", Integer.toString(messageId));
+                frame.addHeader("subscription", Integer.toString(GenreHandler.getInstance().getSubscriptionId(id, channel)));
+                String withIds = frame.toString();
+                send(id, withIds);
+            }
         }
     }
 

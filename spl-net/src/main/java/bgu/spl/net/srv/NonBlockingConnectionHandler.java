@@ -33,6 +33,7 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
         this.chan = chan;
         this.encdec = reader;
         this.protocol = protocol;
+        protocol.start(connectionId,connections);
         this.reactor = reactor;
         this.connectionId=connectionId;
         this.connections=connections;
@@ -55,6 +56,7 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
                     while (buf.hasRemaining()) {
                         Frame nextMessage = encdec.decodeNextByte(buf.get());
                         if (nextMessage != null) {
+                            System.out.println("Client:\n"+nextMessage.toString()+"\nend of Client");
                             protocol.process(nextMessage);
                         }
                     }
@@ -120,7 +122,7 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
 
     @Override
     public void send(Frame msg) {//not sure
-
+        System.out.println("server:\n"+msg.toString()+"\nend of server");
         ByteBuffer buff= ByteBuffer.wrap(encdec.encode(msg));
         writeQueue.add(buff);
         reactor.updateInterestedOps(chan,SelectionKey.OP_WRITE | SelectionKey.OP_READ);

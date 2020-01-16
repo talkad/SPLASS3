@@ -10,26 +10,21 @@ public class StompEncoderDecoder implements MessageEncoderDecoder<Frame> {
     private byte[] bytes = new byte[1 << 10]; //start with 1k
     private int len = 0;
 
-    private byte[] lastTwo=new byte[2];
-
     @Override
     public Frame decodeNextByte(byte nextByte) {
         //notice that the top 128 ascii characters have the same representation as their utf-8 counterparts
         //this allow us to do the following comparison
-        if (lastTwo[0]=='^' && lastTwo[1]=='@') {
-            return new Frame(popString());
+        if (nextByte=='\u0000') {
+            String msg=popString();
+            return new Frame(msg);
         }
-
-        lastTwo[0]=lastTwo[1];
-        lastTwo[1]=nextByte;
-
         pushByte(nextByte);
         return null; //not a line yet
     }
 
     @Override
     public byte[] encode(Frame message) {
-        return (message.toString()).getBytes(StandardCharsets.UTF_8);
+        return (message.toString()+'\u0000').getBytes(StandardCharsets.UTF_8);
     }
 
     private void pushByte(byte nextByte) {

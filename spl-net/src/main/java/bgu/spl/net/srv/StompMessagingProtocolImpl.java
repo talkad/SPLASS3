@@ -93,6 +93,7 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
         //remove the client from all the topics
         GenreHandler.getInstance().disconnect(connectionId);
         User.getInstance().logout(connectionId);
+        shouldTerminate=true;
         connections.disconnect(connectionId);
     }
 
@@ -116,6 +117,7 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
                     Frame error=new Frame("ERROR","User already logged in");
                     error.addHeader("message","User already logged in");
                     connections.send(connectionId,error.toString());
+                    GenreHandler.getInstance().disconnect(connectionId);
                     user.logout(connectionId);
                     shouldTerminate=true;
                     connections.disconnect(connectionId);
@@ -126,13 +128,14 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
                 Frame error=new Frame("ERROR","Wrong password");
                 error.addHeader("message","Wrong password");
                 connections.send(connectionId,error.toString());
+                GenreHandler.getInstance().disconnect(connectionId);
                 user.logout(connectionId);
                 shouldTerminate=true;
                 connections.disconnect(connectionId);
             }
         }
         else{//new user login
-            user.addNewUserConnected(name,pwd);
+            user.addNewUserConnected(connectionId,name,pwd);
             user.login(name,connectionId);
             Frame connected=new Frame("CONNECTED","login successful");
             connected.addHeader("version","1.2");

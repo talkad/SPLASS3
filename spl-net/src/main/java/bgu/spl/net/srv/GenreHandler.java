@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class GenreHandler {
 
-    private ConcurrentHashMap<String, ConcurrentSkipListSet<Integer>> subscribersMap;// key- genrename, element- set of
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> connectionId_SubId_genre;// key- clientid, map that: key-subscriptionid, element-genrename
+    private ConcurrentHashMap<String, ConcurrentSkipListSet<Integer>> subscribersMap=new ConcurrentHashMap<>();// key- genrename, element- set of
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, String>> connectionId_SubId_genre=new ConcurrentHashMap<>();// key- clientid, map that: key-subscriptionid, element-genrename
 
     private static int messageID=0;
 
@@ -35,7 +35,9 @@ public class GenreHandler {
 
     public void subscribeGenre(String genre,int connectionId,int subscriptionId){
         //assumes connectionId is in connectionId_SubId_genre
+        subscribersMap.putIfAbsent(genre,new ConcurrentSkipListSet<Integer>());
         subscribersMap.get(genre).add(connectionId);
+        connectionId_SubId_genre.putIfAbsent(connectionId,new ConcurrentHashMap<>());
         connectionId_SubId_genre.get(connectionId).putIfAbsent(subscriptionId,genre);
     }
 

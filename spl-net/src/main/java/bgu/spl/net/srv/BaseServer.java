@@ -27,7 +27,7 @@ public abstract class BaseServer<T> implements Server<T> {
         this.protocolFactory = protocolFactory;
         this.encdecFactory = encdecFactory;
 		this.sock = null;
-        connectionID=0;
+        connectionID=1;
 
 
         this.connections=new ConnectionsImpl();
@@ -54,6 +54,7 @@ public abstract class BaseServer<T> implements Server<T> {
                         connections);
                 connections.addConnection(connectionID,handler);
                 connectionID++;
+                System.out.println("connection made");
                 execute(handler);
             }
         } catch (IOException ex) {

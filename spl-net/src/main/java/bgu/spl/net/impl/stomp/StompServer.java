@@ -11,11 +11,17 @@ public class StompServer {
     public static void main(String[] args) {
 
 
-        int port=0;
+        int port= Integer.parseInt(args[0]);
         Supplier<MessageEncoderDecoder<Frame>> encoderDecoderFactory= StompEncoderDecoder::new;
         Supplier<StompMessagingProtocol> protocolFactory= StompMessagingProtocolImpl::new;
-        //StompThreadPerClient( port, protocolFactory, encoderDecoderFactory).serve();
-        StompReactor(8,port,protocolFactory,encoderDecoderFactory).serve();
+        if(args[1].equals("tpc")) {
+            StompThreadPerClient(port, protocolFactory, encoderDecoderFactory).serve();
+        }else{
+            if(args[1].equals("reactor"))
+            StompReactor(8,port,protocolFactory,encoderDecoderFactory).serve();
+            else
+                throw new IllegalArgumentException("bad server type");
+        }
 
 
     }
