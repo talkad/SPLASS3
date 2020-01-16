@@ -19,11 +19,12 @@ void writeTask(ConnectionHandler* connectionHandler){
             connectionHandler->sendFrame(frameOut);
             if(line=="logout") {
                 connectionHandler->setLogin(false);
+                connectionHandler->close();
             }
         }
     }
 }
-//192.168.43.45:7777
+//192.168.0.82:7777
 void readTask(ConnectionHandler* connectionHandler){
     while (connectionHandler->isRunning()) {
         if(connectionHandler->isLoggedIn()) {
@@ -55,7 +56,6 @@ int main (int argc, char *argv[]) {
     thread_2.join();
     thread_1.join();
 
-    //TODO: delete this pointer at the end of the connection- delete UserData::getInstance()
     delete connection;
 
     return 0;

@@ -9,7 +9,7 @@ using std::endl;
 using std::string;
  
 ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isLogin(false),
-        runFlag(true), connected(false){}
+        runFlag(true){}
     
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -22,7 +22,6 @@ bool ConnectionHandler::connect() {
 		socket_.connect(endpoint, error);
 		if (error)
 			throw boost::system::system_error(error);
-        connected=true;
         isLogin=true;
     }
     catch (std::exception& e) {
@@ -110,6 +109,7 @@ bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter)
 void ConnectionHandler::close() {
     try{
         socket_.close();
+        delete UserData::getInstance();
     } catch (...) {
         printf("closing failed: connection already closed");
 
@@ -123,11 +123,8 @@ string ConnectionHandler::process(string& frame) {
 
 string ConnectionHandler::toStompFrame(string& msg) {
     string result=encdec.toStompFrame(msg);
-    if(!connected && UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
+    if(UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
         connect();
-    }
-    else if(msg.find("login")!=string::npos){
-        isLogin=true;
     }
 
     return result;
