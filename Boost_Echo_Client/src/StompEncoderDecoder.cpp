@@ -37,11 +37,12 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
     else if(command=="join"){
         frame+="SUBSCRIBE\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
-        frame+="id:"+ std::to_string(UserData::getInstance()->generateSubID())+"\n";
+        int id=UserData::getInstance()->generateSubID();
+        frame+="id:"+ std::to_string(id)+"\n";
         frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
         frame+="\n";
         frame+="^@";
-        UserData::getInstance()->addSubscription(wordsVector.at(1), UserData::getInstance()->generateSubID());
+        UserData::getInstance()->addSubscription(wordsVector.at(1), id);
     }
     else if(command=="exit"){
         frame+="UNSUBSCRIBE\n";
@@ -55,15 +56,27 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+= UserData::getInstance()->getName() +" has added the book "+ wordsVector.at(2)+"\n";
-        UserData::getInstance()->addBook(wordsVector.at(1),wordsVector.at(2));
+        string bookName;
+        for(size_t i=2;i<wordsVector.size();i++){
+            bookName+=wordsVector[i];
+            if(i+1<wordsVector.size())
+                bookName+=" ";
+        }
+        frame+= UserData::getInstance()->getName() +" has added the book "+ bookName+"\n";
+        UserData::getInstance()->addBook(wordsVector.at(1),bookName);
         frame+="^@";
     }
     else if(command=="borrow"){//the response is handle in the protocol
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+= UserData::getInstance()->getName() +" wish to borrow "+wordsVector.at(2);
+        string bookName;
+        for(size_t i=2;i<wordsVector.size();i++){
+            bookName+=wordsVector[i];
+            if(i+1<wordsVector.size())
+                bookName+=" ";
+        }
+        frame+= UserData::getInstance()->getName() +" wish to borrow "+bookName;
         frame+="\n";
         frame+="^@";
     }
@@ -71,8 +84,14 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
         frame+="SEND\n";
         frame+="destination:"+wordsVector.at(1)+"\n";
         frame+="\n";
-        frame+="Returning "+ wordsVector.at(2) + " to " + UserData::getInstance()->getLender(wordsVector.at(2))+"\n";
-        UserData::getInstance()->remove(wordsVector.at(1), wordsVector.at(2));
+        string bookName;
+        for(size_t i=2;i<wordsVector.size();i++){
+            bookName+=wordsVector[i];
+            if(i+1<wordsVector.size())
+                bookName+=" ";
+        }
+        frame+="Returning "+ bookName + " to " + UserData::getInstance()->getLender(bookName)+"\n";
+        UserData::getInstance()->remove(wordsVector.at(1), bookName);
         frame+="^@";
     }
     else if(command=="status"){ //the response is handle in the protocol

@@ -8,7 +8,8 @@ using std::cerr;
 using std::endl;
 using std::string;
  
-ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isConnected(false), runFlag(true){}
+ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isLogin(false),
+        runFlag(true), isConnect(false){}
     
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -21,7 +22,9 @@ bool ConnectionHandler::connect() {
 		socket_.connect(endpoint, error);
 		if (error)
 			throw boost::system::system_error(error);
-        isConnected=true;
+		printf("connect() execute");
+        isLogin=true;
+        isConnect=true;
     }
     catch (std::exception& e) {
         std::cout<< "Could not connect to server" << std::endl;
@@ -30,21 +33,23 @@ bool ConnectionHandler::connect() {
     return true;
 }
 
-bool ConnectionHandler::connected() {
-    return isConnected;
+bool ConnectionHandler::isLoggedIn() {
+    return isLogin;
 }
 
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
     size_t tmp = 0;
 	boost::system::error_code error;
     try {
-        while (!error && bytesToRead > tmp ) {
-			tmp += socket_.read_some(boost::asio::buffer(bytes+tmp, bytesToRead-tmp), error);			
+        if(isConnect) {
+            while (!error && bytesToRead > tmp) {
+                tmp += socket_.read_some(boost::asio::buffer(bytes + tmp, bytesToRead - tmp), error);
+            }
+            if (error)
+                throw boost::system::system_error(error);
         }
-		if(error)
-			throw boost::system::system_error(error);
     } catch (std::exception& e) {
-        std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
+        std::cerr << "get bytes error (Error: " << e.what() << ')' << std::endl;
         return false;
     }
     return true;
@@ -69,6 +74,7 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
 }
 
 bool ConnectionHandler::getFrame(std::string &frame) {
+    printf("login status %d \n",isConnect);
     return getFrameAscii(frame, '\0');
 }
 
@@ -108,10 +114,10 @@ bool ConnectionHandler::sendFrameAscii(const std::string& frame, char delimiter)
 void ConnectionHandler::close() {
     try{
         socket_.close();
+        isConnect=false;
+        delete UserData::getInstance();
     } catch (...) {
         printf("closing failed: connection already closed");
-
-        //std::cout << "closing failed: connection already closed" << std::endl;
     }
 }
 
@@ -121,13 +127,10 @@ string ConnectionHandler::process(string& frame) {
 
 string ConnectionHandler::toStompFrame(string& msg) {
     string result=encdec.toStompFrame(msg);
-//    if(msg=="logout") {
-//        isConnected = false;
-//    }
-    if(!connected() && UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {
+    if(!isConnect && UserData::getInstance()!= nullptr && UserData::getInstance()->getHost().length()>0) {//check this line
         connect();
     }
-    return encdec.toStompFrame(msg);
+    return result;
 }
 
 bool ConnectionHandler::isRunning() {
@@ -138,7 +141,7 @@ void ConnectionHandler::terminate() {
     runFlag=false;
 }
 
-void ConnectionHandler::setConnected(bool connect) {
-    isConnected=connect;
+void ConnectionHandler::setLogin(bool connect) {
+    isLogin=connect;
 }
 

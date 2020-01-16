@@ -15,16 +15,17 @@ private:
 	tcp::socket socket_;
 	StompEncoderDecoder encdec;
     StompMessagingProtocol protocol;
-    bool isConnected;
+    bool isLogin;
     bool runFlag;
- 
+    bool isConnect;
+
 public:
     ConnectionHandler();
     virtual ~ConnectionHandler();
     string process(string& frame);
     string toStompFrame(string& msg);
-    void setConnected(bool connect);
-    bool connected();
+    void setLogin(bool connect);
+    bool isLoggedIn();
     bool isRunning();
     void terminate();
 
