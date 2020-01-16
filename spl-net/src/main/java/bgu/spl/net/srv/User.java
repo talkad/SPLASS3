@@ -1,48 +1,52 @@
 package bgu.spl.net.srv;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class User {
-    private static int id_counter=0;
-    private String name;
-    private String pwd;
-    private boolean logged_in;
-    private int id;
-    private ConcurrentHashMap<String,Integer> genre_map;//map for every id its genre name
 
-    public User(String name, String pwd) {
-        this.name = name;
-        this.pwd = pwd;
-        this.id=id_counter;
-        id_counter++;
-        this.logged_in = false;
-        genre_map=new ConcurrentHashMap<>();
+    private static class SingletonHolder {
+        private static User instance=new User();
+    }
+    private ConcurrentHashMap<String,Boolean> isConnectedMap=new ConcurrentHashMap<>();// name to connected.
+    private ConcurrentHashMap<String,String> isGoodPwd=new ConcurrentHashMap<>();// name to password;
+    private ConcurrentHashMap<Integer,String> connectionIdToName=new ConcurrentHashMap<>();
+    private ConcurrentSkipListSet<Integer> connectedIds=new ConcurrentSkipListSet<>();//DEBUG
+
+
+    public static User getInstance() {
+        return SingletonHolder.instance;
+    }
+    boolean isConnected(String name){
+        return isConnectedMap.get(name);
     }
 
-    public int getGenreID(String genre){
-        return genre_map.get(genre);
+    boolean isExisting(String name){
+        return isGoodPwd.containsKey(name);
     }
 
-    public void addGenre(int id,String genre){
-        genre_map.put(genre,id);
+    boolean isGoodPwd(String name, String pwd){
+        return isGoodPwd.get(name).equals(pwd);
     }
 
-    public String getPwd() {
-        return pwd;
+    void login(String name,int connectionId){
+        isConnectedMap.replace(name,true);
+        connectionIdToName.put(connectionId,name);
+        System.out.println(connectionIdToName.get(connectionId) + " is connected");
     }
 
-    public int getId() { return id; }
-
-    public boolean isLogged_in() {
-        return logged_in;
+    void logout(int connectionId){
+        isConnectedMap.replace(connectionIdToName.get(connectionId),false);
+        System.out.println(connectionIdToName.get(connectionId) + " disconnected");//DEBUG
+        connectionIdToName.remove(connectionId);
+        GenreHandler.getInstance().disconnect(connectionId);
+    }
+    void addNewUserConnected(int connectionId,String name, String pwd){
+        isGoodPwd.putIfAbsent(name,pwd);
+        isConnectedMap.putIfAbsent(name,true);
+        connectionIdToName.put(connectionId,name);
     }
 
-    public void login(){
-        logged_in=true;
-    }
-
-    public void logout(){
-        logged_in=false;
-    }
 }

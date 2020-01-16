@@ -1,7 +1,7 @@
 package bgu.spl.net.srv;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
-import bgu.spl.net.api.MessagingProtocol;
+import bgu.spl.net.api.StompMessagingProtocol;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -20,16 +20,23 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
     private final Queue<ByteBuffer> writeQueue = new ConcurrentLinkedQueue<>();
     private final SocketChannel chan;
     private final Reactor reactor;
+    private int connectionId;
+    private ConnectionsImpl connections;
 
     public NonBlockingConnectionHandler(
             MessageEncoderDecoder<Frame> reader,
             StompMessagingProtocol protocol,
             SocketChannel chan,
-            Reactor reactor) {
+            Reactor reactor,
+            int connectionId,
+            ConnectionsImpl connections) {
         this.chan = chan;
         this.encdec = reader;
         this.protocol = protocol;
+        protocol.start(connectionId,connections);
         this.reactor = reactor;
+        this.connectionId=connectionId;
+        this.connections=connections;
     }
 
     public Runnable continueRead() {
@@ -49,6 +56,7 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
                     while (buf.hasRemaining()) {
                         Frame nextMessage = encdec.decodeNextByte(buf.get());
                         if (nextMessage != null) {
+                            System.out.println("Client:\n"+nextMessage.toString()+"\nend of Client");
                             protocol.process(nextMessage);
                         }
                     }
@@ -113,7 +121,10 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
     }
 
     @Override
-    public void send(Frame msg) {
-        //IMPLEMENT IF NEEDED
+    public void send(Frame msg) {//not sure
+        System.out.println("server:\n"+msg.toString()+"\nend of server");
+        ByteBuffer buff= ByteBuffer.wrap(encdec.encode(msg));
+        writeQueue.add(buff);
+        reactor.updateInterestedOps(chan,SelectionKey.OP_WRITE | SelectionKey.OP_READ);
     }
 }

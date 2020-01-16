@@ -1,11 +1,13 @@
 package bgu.spl.net.srv;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
-import bgu.spl.net.api.MessagingProtocol;
+import bgu.spl.net.api.StompMessagingProtocol;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLOutput;
 
 public class BlockingConnectionHandler implements Runnable, ConnectionHandler<Frame> {
 
@@ -16,11 +18,15 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<Fr
     private BufferedOutputStream out;
     private volatile boolean connected = true;
     private int connectionId;
+    private ConnectionsImpl connections;
 
-    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<Frame> reader, StompMessagingProtocol protocol,int connectionId) {
+
+    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<Frame> reader, StompMessagingProtocol protocol, int connectionId, ConnectionsImpl connections) {
         this.sock = sock;
         this.encdec = reader;
         this.protocol = protocol;
+        this.connections=connections;
+        protocol.start(connectionId,connections);
         this.connectionId=connectionId;
     }
 
@@ -35,6 +41,7 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<Fr
             while (!protocol.shouldTerminate() && connected && (read = in.read()) >= 0) {
                 Frame nextMessage = encdec.decodeNextByte((byte) read);
                 if (nextMessage != null) {
+                    System.out.println("client:\n"+nextMessage.toString()+"\nend of client\n");
                     protocol.process(nextMessage);
                 }
             }
@@ -52,7 +59,15 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<Fr
     }
 
     @Override
-    public void send(Frame msg) {
-        //IMPLEMENT IF NEEDED
+    public void send(Frame msg) {// not sure
+        try {
+            System.out.println("server:\n"+msg.toString()+"\nend of server");
+            out.write(encdec.encode(msg));
+            out.flush();
+        }
+        catch (IOException ex){
+            ex.printStackTrace();
+        }
+
     }
 }

@@ -24,21 +24,22 @@ public class Frame {
         String[] lines=frame.split("\n");
         if(frame.length()>0)
             command=lines[0];
-        for(int i=1;i<lines.length;i++){
-            String currentLine=lines[i];
-            if(currentLine.contains(":")){ //this line will be a header
-                String[] header=currentLine.split(":");
-                headers.put(header[0],header[1]);
-            }
-            else { //this line is part of the body
-                body+=currentLine;
-            }
+        int i=1;
+        String currentLine=lines[1];
+        while(currentLine.contains(":")) {
+            //this line will be a header
+            String[] header = currentLine.split(":");
+            headers.putIfAbsent(header[0], header[1]);
+            i++;
+            currentLine=lines[i];
         }
-        //put the null sign in body
-        if(body.length()>0){
-            body+="\n";
-        }
-        body+="^@";
+        //if we exited the while we are now on "" that separates headers and body
+        //this line is part of the body
+        currentLine=lines[i+1];
+        if(currentLine.equals("^@"))
+            body ="";
+        else
+            body=currentLine;
     }
 
     public void addHeader(String key,String value){
@@ -51,7 +52,11 @@ public class Frame {
             result+=key+":"+headers.get(key)+"\n";
         }
         result+="\n";
-        result+=body; //the body contains the null sign
+        result+=body;
+        if(body.equals(""))
+            result+="^@";
+        else
+            result+="\n^@";
         return result;
     }
 

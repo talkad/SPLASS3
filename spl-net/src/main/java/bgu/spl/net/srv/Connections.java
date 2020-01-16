@@ -12,7 +12,4 @@ public interface Connections<T> {
 
     void addConnection(int connectionId, ConnectionHandler handler);
 
-    void addSubscription(String channel, int clientId, int subscriptionId);
-
-    void removeSubscription(int connectionId, int subscriptionId);
 }
