@@ -3,11 +3,13 @@
 
 #include <vector>
 #include <unordered_map>
+#include <mutex>
 
 using std::vector;
 using std::string;
 using std::vector;
 using std::unordered_map;
+using std::mutex;
 
 class UserData{
 public:
@@ -20,12 +22,12 @@ public:
     string& getName();
     string& getLender(string& bookName);
     //check if book exists it inventory
-    bool isExists(string basicString, string &bookName);
+    bool isExists(const string& basicString, string &bookName);
     string getBooks();
     string& getHost();
     short getPort();
-    void addSubscription(string genre,int id);
-    int getSubByGenre(string genre);
+    void addSubscription(const string& genre,int id);
+    int getSubByGenre(const string& genre);
 
 private:
     UserData(string& name, string& host, short port);
@@ -40,6 +42,10 @@ private:
 
     string host_;
     short port_;
+
+    mutex borrow_mtx;
+    mutex inventory_mtx;
+    mutex sub_mtx;
 };
 
 #endif //BOOST_ECHO_CLIENT_USERDATA_H
