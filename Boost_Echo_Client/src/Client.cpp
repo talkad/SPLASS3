@@ -24,7 +24,7 @@ void writeTask(ConnectionHandler* connectionHandler){
         }
     }
 }
-//192.168.0.82:7777
+//132.72.234.65:7777
 void readTask(ConnectionHandler* connectionHandler){
     while (connectionHandler->isRunning()) {
         if(connectionHandler->isLoggedIn()) {

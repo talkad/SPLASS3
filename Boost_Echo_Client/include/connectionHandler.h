@@ -17,6 +17,7 @@ private:
     StompMessagingProtocol protocol;
     bool isLogin;
     bool runFlag;
+    bool isConnect;
 
 public:
     ConnectionHandler();
