@@ -92,6 +92,7 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
         }
         frame+="Returning "+ bookName + " to " + UserData::getInstance()->getLender(bookName)+"\n";
         UserData::getInstance()->remove(wordsVector.at(1), bookName);
+        UserData::getInstance()-> removeBorrow(bookName);
         frame+="^@";
     }
     else if(command=="status"){ //the response is handle in the protocol

@@ -15,15 +15,18 @@ class UserData{
 public:
     static void initiate(string& name,string& host, short port);
     static UserData* getInstance();
-    void addBook(string& genre,string& bookName);
+    void addBook(const string& genre,const string& bookName);
     void remove(string& genre,string& bookName);
+    void removeBorrow(const string& bookName);
     int generateSubID();
     int generateReceiptID();
     string& getName();
     string& getLender(string& bookName);
+    void addBorrowedBook(const string& bookName);
+    void updateLender(const string& bookName, const string& lenderName,const string& genre);
     //check if book exists it inventory
     bool isExists(const string& basicString, string &bookName);
-    string getBooks();
+    string getBooks(const string& genre);
     string& getHost();
     short getPort();
     void addSubscription(const string& genre,int id);
