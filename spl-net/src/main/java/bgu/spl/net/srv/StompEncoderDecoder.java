@@ -15,7 +15,7 @@ public class StompEncoderDecoder implements MessageEncoderDecoder<Frame> {
         //notice that the top 128 ascii characters have the same representation as their utf-8 counterparts
         //this allow us to do the following comparison
         if (nextByte=='\u0000') {
-            String msg=popString();
+            String msg=popString()+'\u0000';
             return new Frame(msg);
         }
         pushByte(nextByte);
@@ -24,7 +24,7 @@ public class StompEncoderDecoder implements MessageEncoderDecoder<Frame> {
 
     @Override
     public byte[] encode(Frame message) {
-        return (message.toString()+'\u0000').getBytes(StandardCharsets.UTF_8);
+        return (message.toString()).getBytes(StandardCharsets.UTF_8);
     }
 
     private void pushByte(byte nextByte) {
