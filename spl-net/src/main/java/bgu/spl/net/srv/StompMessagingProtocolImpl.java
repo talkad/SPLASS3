@@ -130,7 +130,7 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
                 connections.send(connectionId,error.toString());
                 GenreHandler.getInstance().disconnect(connectionId);
                 user.logout(connectionId);
-                shouldTerminate=true;
+                //shouldTerminate=true;
                 connections.disconnect(connectionId);
             }
         }

@@ -36,7 +36,7 @@ public class Frame {
         //if we exited the while we are now on "" that separates headers and body
         //this line is part of the body
         currentLine=lines[i+1];
-        if(currentLine.equals("^@"))
+        if(currentLine.equals("\u0000"))
             body ="";
         else
             body=currentLine;
@@ -54,9 +54,9 @@ public class Frame {
         result+="\n";
         result+=body;
         if(body.equals(""))
-            result+="^@";
+            result+="\u0000";
         else
-            result+="\n^@";
+            result+="\n\u0000";
         return result;
     }
 
