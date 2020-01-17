@@ -61,7 +61,6 @@ string StompMessagingProtocol::process(string& frame) {
                 message+="\n";
                 message+= UserData::getInstance()->getName() +" has "+bookName;
                 message+="\n";
-                message+="^@";
                 UserData::getInstance()->remove(genre,bookName);
             }
         }
@@ -80,7 +79,6 @@ string StompMessagingProtocol::process(string& frame) {
                 message += "\n";
                 message += "Taking " + bookName + " from " + body[0];
                 message += "\n";
-                message += "^@";
             }
         }
 
@@ -131,7 +129,6 @@ string StompMessagingProtocol::process(string& frame) {
             message+="\n";
             message+= inventory ;
             message+="\n";
-            message+="^@";
         }
     }
     delete header_map;

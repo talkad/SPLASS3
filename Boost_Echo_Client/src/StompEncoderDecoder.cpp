@@ -53,7 +53,6 @@ string StompEncoderDecoder::loginFrame(vector<string> wordsVector) {
     UserData::initiate(wordsVector.at(2),host,std::stoi(port));
     frame+="passcode:"+wordsVector.at(3)+"\n";
     frame+="\n";
-    frame+="^@";
 
     return frame;
 }
@@ -66,7 +65,6 @@ string StompEncoderDecoder::joinFrame(vector<string> wordsVector) {
     frame+="id:"+ std::to_string(id)+"\n";
     frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
     frame+="\n";
-    frame+="^@";
     UserData::getInstance()->addSubscription(wordsVector.at(1), id);
 
     return frame;
@@ -79,7 +77,6 @@ string StompEncoderDecoder::exitFrame(vector<string> wordsVector) {
     frame+="id:"+ std::to_string(UserData::getInstance()->getSubByGenre(wordsVector.at(1)))+"\n";
     frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
     frame+="\n";
-    frame+="^@";
 
     return frame;
 }
@@ -97,7 +94,6 @@ string StompEncoderDecoder::addFrame(vector<string> wordsVector) {
     }
     frame+= UserData::getInstance()->getName() +" has added the book "+ bookName+"\n";
     UserData::getInstance()->addBook(wordsVector.at(1),bookName);
-    frame+="^@";
 
     return frame;
 }
@@ -115,7 +111,6 @@ string StompEncoderDecoder::borrowFrame(vector<string> wordsVector) {
     }
     frame+= UserData::getInstance()->getName() +" wish to borrow "+bookName;
     frame+="\n";
-    frame+="^@";
 
     return frame;
 }
@@ -134,7 +129,6 @@ string StompEncoderDecoder::returnFrame(vector<string> wordsVector) {
     frame+="Returning "+ bookName + " to " + UserData::getInstance()->getLender(bookName)+"\n";
     UserData::getInstance()->remove(wordsVector.at(1), bookName);
     UserData::getInstance()-> removeBorrow(bookName);
-    frame+="^@";
 
     return frame;
 }
@@ -145,7 +139,6 @@ string StompEncoderDecoder::statusFrame(vector<string> wordsVector) {
     frame+="destination:"+wordsVector.at(1)+"\n";
     frame+="\n";
     frame+= "book status\n";
-    frame+="^@";
 
     return frame;
 }
@@ -155,7 +148,6 @@ string StompEncoderDecoder::logoutFrame(vector<string> wordsVector) {
     frame+="DISCONNECT\n";
     frame+="receipt:"+std::to_string(UserData::getInstance()->generateReceiptID())+"\n";
     frame+="\n";
-    frame+="^@";
 
     return frame;
 }
