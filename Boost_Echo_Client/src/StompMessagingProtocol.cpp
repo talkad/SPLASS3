@@ -59,10 +59,28 @@ string StompMessagingProtocol::process(string& frame) {
                 message+="SEND\n";
                 message+="destination:"+genre+"\n";
                 message+="\n";
-                message+= "Taking "+bookName+" from "+UserData::getInstance()->getName() ;
+                message+= UserData::getInstance()->getName() +" has "+bookName;
                 message+="\n";
                 message+="^@";
                 UserData::getInstance()->remove(genre,bookName);
+            }
+        }
+
+        else if(message_body.find(" has ") != string::npos && message_body.find(" has added the book ") == string::npos){
+            string bookName;
+            for(size_t i=2;i<body.size();i++){
+                bookName+=body[i];
+                if(i+1<body.size())
+                    bookName+=" ";
+            }
+            if(UserData::getInstance()->getName()==body[0]) {
+                bookName.erase(std::remove(bookName.begin(), bookName.end(), '\n'), bookName.end());
+                message += "SEND\n";
+                message += "destination:" + genre + "\n";
+                message += "\n";
+                message += "Taking " + bookName + " from " + body[0];
+                message += "\n";
+                message += "^@";
             }
         }
 
