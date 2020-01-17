@@ -8,6 +8,7 @@
 #include <StompMessagingProtocol.h>
 
 using boost::asio::ip::tcp;
+using std::mutex;
 
 class ConnectionHandler{
 private:
@@ -15,19 +16,19 @@ private:
 	tcp::socket socket_;
 	StompEncoderDecoder encdec;
     StompMessagingProtocol protocol;
-    bool isLogin;
     bool runFlag;
     bool isConnect;
+
+    //mutex mtx;
 
 public:
     ConnectionHandler();
     virtual ~ConnectionHandler();
     string process(string& frame);
     string toStompFrame(string& msg);
-    void setLogin(bool connect);
-    bool isLoggedIn();
     bool isRunning();
     void terminate();
+    bool isConnected();
 
     // Connect to the remote machine
     bool connect();

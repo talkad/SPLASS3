@@ -8,8 +8,8 @@ using std::cerr;
 using std::endl;
 using std::string;
  
-ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(), isLogin(false),
-        runFlag(true), isConnect(false){}
+ConnectionHandler::ConnectionHandler(): io_service_(), socket_(io_service_), encdec(), protocol(),
+        runFlag(true),isConnect(false){}
     
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -22,9 +22,7 @@ bool ConnectionHandler::connect() {
 		socket_.connect(endpoint, error);
 		if (error)
 			throw boost::system::system_error(error);
-		printf("connect() execute");
-        isLogin=true;
-        isConnect=true;
+		isConnect=true;
     }
     catch (std::exception& e) {
         std::cout<< "Could not connect to server" << std::endl;
@@ -33,23 +31,17 @@ bool ConnectionHandler::connect() {
     return true;
 }
 
-bool ConnectionHandler::isLoggedIn() {
-    return isLogin;
-}
-
 bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
     size_t tmp = 0;
 	boost::system::error_code error;
     try {
-        if(isConnect) {
-            while (!error && bytesToRead > tmp) {
-                tmp += socket_.read_some(boost::asio::buffer(bytes + tmp, bytesToRead - tmp), error);
-            }
-            if (error)
-                throw boost::system::system_error(error);
+        while (!error && bytesToRead > tmp) {
+            tmp += socket_.read_some(boost::asio::buffer(bytes + tmp, bytesToRead - tmp), error);
         }
+        if (error)
+            throw boost::system::system_error(error);
     } catch (std::exception& e) {
-        std::cerr << "get bytes error (Error: " << e.what() << ')' << std::endl;
+        printf("connection closed! \n");
         return false;
     }
     return true;
@@ -66,20 +58,17 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
             throw boost::system::system_error(error);
         }
     } catch (std::exception& e) {
-        //std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
-        printf("connection closed :(");
+        printf("connection closed! \n");
         return false;
     }
     return true;
 }
 
 bool ConnectionHandler::getFrame(std::string &frame) {
-    printf("login status %d \n",isConnect);
     return getFrameAscii(frame, '\0');
 }
 
 bool ConnectionHandler::sendFrame(std::string &frame) {
-    printf(" try send: \n %s \n",frame.c_str());
     return sendFrameAscii(frame, '\0');
 }
 
@@ -97,7 +86,7 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
 			frame.append(1, ch);
 	}while (delimiter != ch);
     } catch (std::exception& e) {
-        printf("connection closed :(");
+        printf("connection closed ! \n");
         //std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
 	    return false;
     }
@@ -115,7 +104,6 @@ void ConnectionHandler::close() {
     try{
         socket_.close();
         isConnect=false;
-        delete UserData::getInstance();
     } catch (...) {
         printf("closing failed: connection already closed");
     }
@@ -141,7 +129,6 @@ void ConnectionHandler::terminate() {
     runFlag=false;
 }
 
-void ConnectionHandler::setLogin(bool connect) {
-    isLogin=connect;
+bool ConnectionHandler::isConnected() {
+    return isConnect;
 }
-

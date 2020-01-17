@@ -27,6 +27,19 @@ string& UserData::getLender(string& bookName) {
     return borrow_map.at(bookName);
 }
 
+void UserData::addBorrowedBook(const string &bookName) {
+    std::unique_lock<mutex> lck (borrow_mtx);
+    borrow_map[bookName]="";
+}
+
+void UserData::updateLender(const string &bookName, const string &lenderName,const string& genre) {
+    std::unique_lock<mutex> lck (borrow_mtx);
+    if(borrow_map.find(bookName)!=borrow_map.end() && borrow_map[bookName].size()==0) {
+        borrow_map[bookName] = lenderName;
+        addBook(genre,bookName);
+    }
+}
+
 int UserData::generateReceiptID() {
     int id=receipt_id_counter;
     receipt_id_counter++;
@@ -39,7 +52,7 @@ int UserData::generateSubID() {
     return id;
 }
 
-void UserData::addBook(string &genre, string &bookName) {
+void UserData::addBook(const string &genre,const string &bookName) {
     std::unique_lock<mutex> lck (inventory_mtx);
     inventory[genre].push_back(bookName);
 }
@@ -52,23 +65,28 @@ void UserData::remove(string &genre, string &bookName) {
     }
 }
 
+void UserData::removeBorrow(const string &bookName) {
+    borrow_map.erase(bookName);
+}
+
 bool UserData::isExists(const string& genre, string &bookName) {
     std::unique_lock<mutex> lck (inventory_mtx);
     vector<string>::iterator it;
-    it = std::find (inventory[genre].begin(), inventory[genre].end(), bookName);
-    if (it != inventory[genre].end())
-    {
-        return true;
+    if(inventory.find(genre)!=inventory.end()) {
+        it = std::find(inventory.at(genre).begin(), inventory.at(genre).end(), bookName);
+        if (it != inventory.at(genre).end()) {
+            return true;
+        }
     }
     return false;
 }
 
-string UserData::getBooks() {
+string UserData::getBooks(const string& genre) {
     std::unique_lock<mutex> lck (inventory_mtx);
     string books;
-    for(const auto& genre: inventory){
-        for(const string& book: genre.second){
-            books+=book+",";
+    if(inventory.find(genre)!=inventory.end()) {
+        for (const string &book: inventory.at(genre)) {
+            books += book + ",";
         }
     }
     if(books.length()>0)

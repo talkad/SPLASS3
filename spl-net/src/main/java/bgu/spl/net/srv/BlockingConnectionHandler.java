@@ -63,7 +63,7 @@ public class BlockingConnectionHandler implements Runnable, ConnectionHandler<Fr
         try {
             System.out.println("server:\n"+msg.toString()+"\nend of server");
             out.write(encdec.encode(msg));
-            out.flush();
+            out.flush(); //problematic line
         }
         catch (IOException ex){
             ex.printStackTrace();
