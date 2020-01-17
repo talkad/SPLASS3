@@ -11,20 +11,16 @@ void writeTask(ConnectionHandler* connectionHandler){
         char buf[bufsize];
         std::cin.getline(buf, bufsize);
         string line(buf);
-//        if(line=="bye")
-//            connectionHandler->terminate();
 
         string frameOut=connectionHandler->toStompFrame(line);
-        //if (connectionHandler->isLoggedIn()) {
-            connectionHandler->sendFrame(frameOut);
-            if(line=="logout") {
-                connectionHandler->terminate();
-                connectionHandler->close();
-            }
-        //}
+        connectionHandler->sendFrame(frameOut);
+        if(line=="logout") {
+            connectionHandler->terminate();
+            connectionHandler->close();
+        }
+
     }
 }
-//132.72.234.65:7777
 void readTask(ConnectionHandler* connectionHandler){
     while (connectionHandler->isRunning()) {
         if(connectionHandler->isConnected()) {
@@ -57,7 +53,9 @@ int main (int argc, char *argv[]) {
     thread_1.join();
 
     delete connection;
-    delete UserData::getInstance();
+
+    if(UserData::getInstance()!=nullptr)
+        delete UserData::getInstance();
 
     return 0;
 }

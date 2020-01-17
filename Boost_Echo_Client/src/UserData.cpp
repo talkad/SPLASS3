@@ -53,14 +53,12 @@ int UserData::generateSubID() {
 }
 
 void UserData::addBook(const string &genre,const string &bookName) {
-    printf("xxxxxxxxxx book %s added\n",bookName.c_str());
     std::unique_lock<mutex> lck (inventory_mtx);
     inventory[genre].push_back(bookName);
 }
 
 void UserData::remove(string &genre, string &bookName) {
     std::unique_lock<mutex> lck (inventory_mtx);
-    printf("xxxxxxxx book %s removed\n",bookName.c_str());
     std::vector<std::string>::iterator itr = std::find(inventory[genre].begin(), inventory[genre].end(), bookName);
     if (itr != inventory[genre].cend()) {
         inventory[genre].erase(itr);

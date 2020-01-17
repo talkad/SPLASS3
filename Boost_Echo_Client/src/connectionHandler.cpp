@@ -41,7 +41,6 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
         if (error)
             throw boost::system::system_error(error);
     } catch (std::exception& e) {
-        //std::cerr << "get bytes error (Error: " << e.what() << ')' << std::endl;
         printf("connection closed! \n");
         return false;
     }
@@ -59,7 +58,6 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
             throw boost::system::system_error(error);
         }
     } catch (std::exception& e) {
-        //std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         printf("connection closed! \n");
         return false;
     }
@@ -71,7 +69,6 @@ bool ConnectionHandler::getFrame(std::string &frame) {
 }
 
 bool ConnectionHandler::sendFrame(std::string &frame) {
-    printf(" try send: \n %s \n",frame.c_str());  //TO-DO: DELETE THIS LINE
     return sendFrameAscii(frame, '\0');
 }
 

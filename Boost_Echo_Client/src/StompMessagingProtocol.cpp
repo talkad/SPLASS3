@@ -5,7 +5,6 @@
 
 //borrow- the book will be removed from this client if the book exists, but the borrower will not get the book
 string StompMessagingProtocol::process(string& frame) {
-
     auto* header_map=new unordered_map<string,string>();
     vector<string> lines;
     splitSentence(frame,lines,'\n');
@@ -25,7 +24,6 @@ string StompMessagingProtocol::process(string& frame) {
     }
 
     size_t body_index=frame.find("\n\n");
-
     string body=frame.substr(body_index+2);
     string message_body=body.substr(0,body.size()-2);
 
