@@ -38,10 +38,11 @@ public class User {
     }
 
     void logout(int connectionId){
-        isConnectedMap.replace(connectionIdToName.get(connectionId),false);
-        System.out.println(connectionIdToName.get(connectionId) + " disconnected");//DEBUG
-        connectionIdToName.remove(connectionId);
-        GenreHandler.getInstance().disconnect(connectionId);
+        if(connectionIdToName.get(connectionId)!=null) {
+            isConnectedMap.replace(connectionIdToName.get(connectionId), false);
+            connectionIdToName.remove(connectionId);
+            GenreHandler.getInstance().disconnect(connectionId);
+        }
     }
     void addNewUserConnected(int connectionId,String name, String pwd){
         isGoodPwd.putIfAbsent(name,pwd);

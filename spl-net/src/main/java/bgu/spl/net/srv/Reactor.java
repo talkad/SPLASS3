@@ -68,9 +68,7 @@ public class Reactor<T> implements Server<T> {
                         handleReadWrite(key);
                     }
                 }
-
                 selector.selectedKeys().clear(); //clear the selected keys set so that we can know about new events
-
             }
 
         } catch (ClosedSelectorException ex) {
@@ -90,7 +88,8 @@ public class Reactor<T> implements Server<T> {
             key.interestOps(ops);
         } else {
             selectorTasks.add(() -> {
-                key.interestOps(ops);
+                if(key.isValid())
+                    key.interestOps(ops);
             });
             selector.wakeup();
         }

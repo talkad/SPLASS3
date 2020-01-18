@@ -66,7 +66,7 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
         //add the client to a reading club
         GenreHandler.getInstance().subscribeGenre(genre,connectionId,Integer.parseInt(subID));
         Frame receipt=new Frame("RECEIPT","Joined club "+genre);
-        receipt.addHeader("receipt",receiptID);
+        receipt.addHeader("receipt-id",receiptID);
         connections.send(connectionId,receipt.toString());
     }
 
@@ -79,7 +79,7 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
         //remove the client to a reading club
         GenreHandler.getInstance().unsubscribeGenre(connectionId,Integer.parseInt(subscriptionId));
         Frame receipt=new Frame("RECEIPT","Exited club "+genre);
-        receipt.addHeader("receipt",receiptID);
+        receipt.addHeader("receipt-id",receiptID);
         connections.send(connectionId,receipt.toString());
     }
 
@@ -89,11 +89,11 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
         String receiptID=headers.get("receipt");
         Frame receipt=new Frame("RECEIPT","");
         receipt.addHeader("receipt-id",receiptID);
+        shouldTerminate=true;
         connections.send(connectionId,receipt.toString());
         //remove the client from all the topics
         GenreHandler.getInstance().disconnect(connectionId);
         User.getInstance().logout(connectionId);
-        shouldTerminate=true;
         connections.disconnect(connectionId);
     }
 
@@ -116,10 +116,9 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
                 else{ //this client was connected already
                     Frame error=new Frame("ERROR","User already logged in");
                     error.addHeader("message","User already logged in");
-                    connections.send(connectionId,error.toString());
-                    GenreHandler.getInstance().disconnect(connectionId);
-                    user.logout(connectionId);
                     shouldTerminate=true;
+                    connections.send(connectionId,error.toString());
+                    user.logout(connectionId);
                     connections.disconnect(connectionId);
                 }
 
@@ -127,10 +126,9 @@ public class StompMessagingProtocolImpl implements bgu.spl.net.api.StompMessagin
             else{ //user exists but wrong pwd
                 Frame error=new Frame("ERROR","Wrong password");
                 error.addHeader("message","Wrong password");
+                shouldTerminate=true;
                 connections.send(connectionId,error.toString());
-                GenreHandler.getInstance().disconnect(connectionId);
                 user.logout(connectionId);
-                //shouldTerminate=true;
                 connections.disconnect(connectionId);
             }
         }

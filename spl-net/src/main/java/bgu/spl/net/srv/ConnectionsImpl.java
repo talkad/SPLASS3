@@ -46,16 +46,9 @@ public class ConnectionsImpl implements Connections<String> {
 
     @Override
     public void disconnect(int connectionId) {
-        try {
-            handlersMap.get(connectionId).close();
-        } catch (IOException ignored) {
-        }
         handlersMap.remove(connectionId);
-
     }
     public void addConnection(int connectionId, ConnectionHandler handler){
         handlersMap.put(connectionId,handler);
     }
-
-
 }
