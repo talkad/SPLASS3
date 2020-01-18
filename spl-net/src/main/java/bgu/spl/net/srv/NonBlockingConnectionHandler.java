@@ -69,7 +69,6 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
             close();
             return null;
         }
-
     }
 
     public void close() {
@@ -101,8 +100,14 @@ public class NonBlockingConnectionHandler implements ConnectionHandler<Frame> {
         }
 
         if (writeQueue.isEmpty()) {
-            if (protocol.shouldTerminate()) close();
-            else reactor.updateInterestedOps(chan, SelectionKey.OP_READ);
+            if (protocol.shouldTerminate())
+            {
+                close();
+            }
+            else
+            {
+                reactor.updateInterestedOps(chan, SelectionKey.OP_READ);
+            }
         }
     }
 
