@@ -33,7 +33,7 @@ string StompMessagingProtocol::process(string& frame) {
     }
 
     else if(command=="ERROR"){
-        printf("%s \n",message_body.c_str());
+        printf("%s\n",message_body.c_str());
     }
 
     else if(command.compare("MESSAGE")==0){
