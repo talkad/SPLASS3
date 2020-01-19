@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.15)
+project(Client)
+
+set(CMAKE_CXX_STANDARD  14)
+
+include_directories(include libpthread)
+
+add_executable(Client
+        include/connectionHandler.h
+        src/connectionHandler.cpp
+        include/UserData.h
+        src/UserData.cpp
+        include/StompMessagingProtocol.h
+        src/StompMessagingProtocol.cpp
+        include/StompEncoderDecoder.h
+        src/StompEncoderDecoder.cpp
+        src/Client.cpp
+        )
+
+find_package(Boost 1.56 REQUIRED COMPONENTS date_time filesystem iostreams)
+
+target_link_libraries(Client Boost::date_time Boost::filesystem Boost::iostreams -lpthread)
