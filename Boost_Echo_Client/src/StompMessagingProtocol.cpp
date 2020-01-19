@@ -25,7 +25,9 @@ string StompMessagingProtocol::process(string& frame) {
 
     size_t body_index=frame.find("\n\n");
     string body=frame.substr(body_index+2);
-    string message_body=body.substr(0,body.size()-2);
+    string message_body=body.substr(0,body.size());
+    message_body.erase(std::remove(message_body.begin(), message_body.end(), '\n'), message_body.end());
+
 
     string message;
     if(command=="CONNECTED"){

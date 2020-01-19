@@ -18,25 +18,25 @@ string StompEncoderDecoder::toStompFrame(const string& msg) {
     string frame;
     vector<string> wordsVector;
     splitSentence(msg, wordsVector);
+    if(wordsVector.size()>0) {
     string command=wordsVector.at(0);
-
-    if(command=="login")
-        frame=loginFrame(wordsVector);
-    else if(command=="join")
-        frame=joinFrame(wordsVector);
-    else if(command=="exit")
-        frame=exitFrame(wordsVector);
-    else if(command=="add")
-        frame=addFrame(wordsVector);
-    else if(command=="borrow")//the response is handle in the protocol
-        frame=borrowFrame(wordsVector);
-    else if(command=="return")
-        frame=returnFrame(wordsVector);
-    else if(command=="status") //the response is handle in the protocol
-        frame=statusFrame(wordsVector);
-    else if(command=="logout")
-        frame=logoutFrame(wordsVector);
-
+        if (command == "login")
+            frame = loginFrame(wordsVector);
+        else if (command == "join")
+            frame = joinFrame(wordsVector);
+        else if (command == "exit")
+            frame = exitFrame(wordsVector);
+        else if (command == "add")
+            frame = addFrame(wordsVector);
+        else if (command == "borrow")//the response is handle in the protocol
+            frame = borrowFrame(wordsVector);
+        else if (command == "return")
+            frame = returnFrame(wordsVector);
+        else if (command == "status") //the response is handle in the protocol
+            frame = statusFrame(wordsVector);
+        else if (command == "logout")
+            frame = logoutFrame(wordsVector);
+    }
     return frame;
 }
 

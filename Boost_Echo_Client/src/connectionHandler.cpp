@@ -25,6 +25,8 @@ bool ConnectionHandler::connect() {
 		isConnect=true;
     }
     catch (std::exception& e) {
+        terminate();
+        isConnect=false;
         std::cout<< "Could not connect to server" << std::endl;
         return false;
     }
@@ -41,6 +43,8 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
         if (error)
             throw boost::system::system_error(error);
     } catch (std::exception& e) {
+        terminate();
+        isConnect=false;
         printf("connection closed! \n");
         return false;
     }
@@ -58,6 +62,8 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
             throw boost::system::system_error(error);
         }
     } catch (std::exception& e) {
+        terminate();
+        isConnect=false;
         printf("connection closed! \n");
         return false;
     }
@@ -87,8 +93,9 @@ bool ConnectionHandler::getFrameAscii(std::string& frame, char delimiter) {
 	}while (delimiter != ch);
     } catch (std::exception& e) {
         printf("connection closed ! \n");
-        //std::cerr << "recv failed2 (Error: " << e.what() << ')' << std::endl;
-	    return false;
+        terminate();
+        isConnect=false;
+        return false;
     }
     return true;
 }
@@ -105,6 +112,8 @@ void ConnectionHandler::close() {
         socket_.close();
         isConnect=false;
     } catch (...) {
+        terminate();
+        isConnect=false;
         printf("closing failed: connection already closed");
     }
 }
